@@ -9,27 +9,433 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VehiclesRouteImport } from './routes/vehicles'
+import { Route as ReportsRouteImport } from './routes/reports'
+import { Route as RegisterRouteImport } from './routes/register'
+import { Route as MyVehiclesRouteImport } from './routes/my-vehicles'
+import { Route as ManageUsersRouteImport } from './routes/manage-users'
+import { Route as ManageAgentsRouteImport } from './routes/manage-agents'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as HistoryRouteImport } from './routes/history'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as BookingsRouteImport } from './routes/bookings'
+import { Route as AllSessionsRouteImport } from './routes/all-sessions'
+import { Route as AgentReviewsRouteImport } from './routes/agent-reviews'
+import { Route as AgentBookingsRouteImport } from './routes/agent-bookings'
+import { Route as AdminReportsRouteImport } from './routes/admin-reports'
+import { Route as AddVehicleRouteImport } from './routes/add-vehicle'
+import { Route as ActiveSessionsRouteImport } from './routes/active-sessions'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as VehicleVehicleIdRouteImport } from './routes/vehicle.$vehicleId'
+import { Route as SessionSessionIdRouteImport } from './routes/session.$sessionId'
 
-export interface FileRoutesByFullPath {}
-export interface FileRoutesByTo {}
+const VehiclesRoute = VehiclesRouteImport.update({
+  id: '/vehicles',
+  path: '/vehicles',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportsRoute = ReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MyVehiclesRoute = MyVehiclesRouteImport.update({
+  id: '/my-vehicles',
+  path: '/my-vehicles',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ManageUsersRoute = ManageUsersRouteImport.update({
+  id: '/manage-users',
+  path: '/manage-users',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ManageAgentsRoute = ManageAgentsRouteImport.update({
+  id: '/manage-agents',
+  path: '/manage-agents',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HistoryRoute = HistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookingsRoute = BookingsRouteImport.update({
+  id: '/bookings',
+  path: '/bookings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AllSessionsRoute = AllSessionsRouteImport.update({
+  id: '/all-sessions',
+  path: '/all-sessions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgentReviewsRoute = AgentReviewsRouteImport.update({
+  id: '/agent-reviews',
+  path: '/agent-reviews',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgentBookingsRoute = AgentBookingsRouteImport.update({
+  id: '/agent-bookings',
+  path: '/agent-bookings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminReportsRoute = AdminReportsRouteImport.update({
+  id: '/admin-reports',
+  path: '/admin-reports',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AddVehicleRoute = AddVehicleRouteImport.update({
+  id: '/add-vehicle',
+  path: '/add-vehicle',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ActiveSessionsRoute = ActiveSessionsRouteImport.update({
+  id: '/active-sessions',
+  path: '/active-sessions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehicleVehicleIdRoute = VehicleVehicleIdRouteImport.update({
+  id: '/vehicle/$vehicleId',
+  path: '/vehicle/$vehicleId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SessionSessionIdRoute = SessionSessionIdRouteImport.update({
+  id: '/session/$sessionId',
+  path: '/session/$sessionId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+
+export interface FileRoutesByFullPath {
+  '/': typeof IndexRoute
+  '/active-sessions': typeof ActiveSessionsRoute
+  '/add-vehicle': typeof AddVehicleRoute
+  '/admin-reports': typeof AdminReportsRoute
+  '/agent-bookings': typeof AgentBookingsRoute
+  '/agent-reviews': typeof AgentReviewsRoute
+  '/all-sessions': typeof AllSessionsRoute
+  '/bookings': typeof BookingsRoute
+  '/dashboard': typeof DashboardRoute
+  '/history': typeof HistoryRoute
+  '/login': typeof LoginRoute
+  '/manage-agents': typeof ManageAgentsRoute
+  '/manage-users': typeof ManageUsersRoute
+  '/my-vehicles': typeof MyVehiclesRoute
+  '/register': typeof RegisterRoute
+  '/reports': typeof ReportsRoute
+  '/vehicles': typeof VehiclesRoute
+  '/session/$sessionId': typeof SessionSessionIdRoute
+  '/vehicle/$vehicleId': typeof VehicleVehicleIdRoute
+}
+export interface FileRoutesByTo {
+  '/': typeof IndexRoute
+  '/active-sessions': typeof ActiveSessionsRoute
+  '/add-vehicle': typeof AddVehicleRoute
+  '/admin-reports': typeof AdminReportsRoute
+  '/agent-bookings': typeof AgentBookingsRoute
+  '/agent-reviews': typeof AgentReviewsRoute
+  '/all-sessions': typeof AllSessionsRoute
+  '/bookings': typeof BookingsRoute
+  '/dashboard': typeof DashboardRoute
+  '/history': typeof HistoryRoute
+  '/login': typeof LoginRoute
+  '/manage-agents': typeof ManageAgentsRoute
+  '/manage-users': typeof ManageUsersRoute
+  '/my-vehicles': typeof MyVehiclesRoute
+  '/register': typeof RegisterRoute
+  '/reports': typeof ReportsRoute
+  '/vehicles': typeof VehiclesRoute
+  '/session/$sessionId': typeof SessionSessionIdRoute
+  '/vehicle/$vehicleId': typeof VehicleVehicleIdRoute
+}
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/active-sessions': typeof ActiveSessionsRoute
+  '/add-vehicle': typeof AddVehicleRoute
+  '/admin-reports': typeof AdminReportsRoute
+  '/agent-bookings': typeof AgentBookingsRoute
+  '/agent-reviews': typeof AgentReviewsRoute
+  '/all-sessions': typeof AllSessionsRoute
+  '/bookings': typeof BookingsRoute
+  '/dashboard': typeof DashboardRoute
+  '/history': typeof HistoryRoute
+  '/login': typeof LoginRoute
+  '/manage-agents': typeof ManageAgentsRoute
+  '/manage-users': typeof ManageUsersRoute
+  '/my-vehicles': typeof MyVehiclesRoute
+  '/register': typeof RegisterRoute
+  '/reports': typeof ReportsRoute
+  '/vehicles': typeof VehiclesRoute
+  '/session/$sessionId': typeof SessionSessionIdRoute
+  '/vehicle/$vehicleId': typeof VehicleVehicleIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: never
+  fullPaths:
+    | '/'
+    | '/active-sessions'
+    | '/add-vehicle'
+    | '/admin-reports'
+    | '/agent-bookings'
+    | '/agent-reviews'
+    | '/all-sessions'
+    | '/bookings'
+    | '/dashboard'
+    | '/history'
+    | '/login'
+    | '/manage-agents'
+    | '/manage-users'
+    | '/my-vehicles'
+    | '/register'
+    | '/reports'
+    | '/vehicles'
+    | '/session/$sessionId'
+    | '/vehicle/$vehicleId'
   fileRoutesByTo: FileRoutesByTo
-  to: never
-  id: '__root__'
+  to:
+    | '/'
+    | '/active-sessions'
+    | '/add-vehicle'
+    | '/admin-reports'
+    | '/agent-bookings'
+    | '/agent-reviews'
+    | '/all-sessions'
+    | '/bookings'
+    | '/dashboard'
+    | '/history'
+    | '/login'
+    | '/manage-agents'
+    | '/manage-users'
+    | '/my-vehicles'
+    | '/register'
+    | '/reports'
+    | '/vehicles'
+    | '/session/$sessionId'
+    | '/vehicle/$vehicleId'
+  id:
+    | '__root__'
+    | '/'
+    | '/active-sessions'
+    | '/add-vehicle'
+    | '/admin-reports'
+    | '/agent-bookings'
+    | '/agent-reviews'
+    | '/all-sessions'
+    | '/bookings'
+    | '/dashboard'
+    | '/history'
+    | '/login'
+    | '/manage-agents'
+    | '/manage-users'
+    | '/my-vehicles'
+    | '/register'
+    | '/reports'
+    | '/vehicles'
+    | '/session/$sessionId'
+    | '/vehicle/$vehicleId'
   fileRoutesById: FileRoutesById
 }
-export interface RootRouteChildren {}
-
-declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {}
+export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
+  ActiveSessionsRoute: typeof ActiveSessionsRoute
+  AddVehicleRoute: typeof AddVehicleRoute
+  AdminReportsRoute: typeof AdminReportsRoute
+  AgentBookingsRoute: typeof AgentBookingsRoute
+  AgentReviewsRoute: typeof AgentReviewsRoute
+  AllSessionsRoute: typeof AllSessionsRoute
+  BookingsRoute: typeof BookingsRoute
+  DashboardRoute: typeof DashboardRoute
+  HistoryRoute: typeof HistoryRoute
+  LoginRoute: typeof LoginRoute
+  ManageAgentsRoute: typeof ManageAgentsRoute
+  ManageUsersRoute: typeof ManageUsersRoute
+  MyVehiclesRoute: typeof MyVehiclesRoute
+  RegisterRoute: typeof RegisterRoute
+  ReportsRoute: typeof ReportsRoute
+  VehiclesRoute: typeof VehiclesRoute
+  SessionSessionIdRoute: typeof SessionSessionIdRoute
+  VehicleVehicleIdRoute: typeof VehicleVehicleIdRoute
 }
 
-const rootRouteChildren: RootRouteChildren = {}
+declare module '@tanstack/react-router' {
+  interface FileRoutesByPath {
+    '/vehicles': {
+      id: '/vehicles'
+      path: '/vehicles'
+      fullPath: '/vehicles'
+      preLoaderRoute: typeof VehiclesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reports': {
+      id: '/reports'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof ReportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/my-vehicles': {
+      id: '/my-vehicles'
+      path: '/my-vehicles'
+      fullPath: '/my-vehicles'
+      preLoaderRoute: typeof MyVehiclesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/manage-users': {
+      id: '/manage-users'
+      path: '/manage-users'
+      fullPath: '/manage-users'
+      preLoaderRoute: typeof ManageUsersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/manage-agents': {
+      id: '/manage-agents'
+      path: '/manage-agents'
+      fullPath: '/manage-agents'
+      preLoaderRoute: typeof ManageAgentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/history': {
+      id: '/history'
+      path: '/history'
+      fullPath: '/history'
+      preLoaderRoute: typeof HistoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bookings': {
+      id: '/bookings'
+      path: '/bookings'
+      fullPath: '/bookings'
+      preLoaderRoute: typeof BookingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/all-sessions': {
+      id: '/all-sessions'
+      path: '/all-sessions'
+      fullPath: '/all-sessions'
+      preLoaderRoute: typeof AllSessionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agent-reviews': {
+      id: '/agent-reviews'
+      path: '/agent-reviews'
+      fullPath: '/agent-reviews'
+      preLoaderRoute: typeof AgentReviewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agent-bookings': {
+      id: '/agent-bookings'
+      path: '/agent-bookings'
+      fullPath: '/agent-bookings'
+      preLoaderRoute: typeof AgentBookingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin-reports': {
+      id: '/admin-reports'
+      path: '/admin-reports'
+      fullPath: '/admin-reports'
+      preLoaderRoute: typeof AdminReportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/add-vehicle': {
+      id: '/add-vehicle'
+      path: '/add-vehicle'
+      fullPath: '/add-vehicle'
+      preLoaderRoute: typeof AddVehicleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/active-sessions': {
+      id: '/active-sessions'
+      path: '/active-sessions'
+      fullPath: '/active-sessions'
+      preLoaderRoute: typeof ActiveSessionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicle/$vehicleId': {
+      id: '/vehicle/$vehicleId'
+      path: '/vehicle/$vehicleId'
+      fullPath: '/vehicle/$vehicleId'
+      preLoaderRoute: typeof VehicleVehicleIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/session/$sessionId': {
+      id: '/session/$sessionId'
+      path: '/session/$sessionId'
+      fullPath: '/session/$sessionId'
+      preLoaderRoute: typeof SessionSessionIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+  }
+}
+
+const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
+  ActiveSessionsRoute: ActiveSessionsRoute,
+  AddVehicleRoute: AddVehicleRoute,
+  AdminReportsRoute: AdminReportsRoute,
+  AgentBookingsRoute: AgentBookingsRoute,
+  AgentReviewsRoute: AgentReviewsRoute,
+  AllSessionsRoute: AllSessionsRoute,
+  BookingsRoute: BookingsRoute,
+  DashboardRoute: DashboardRoute,
+  HistoryRoute: HistoryRoute,
+  LoginRoute: LoginRoute,
+  ManageAgentsRoute: ManageAgentsRoute,
+  ManageUsersRoute: ManageUsersRoute,
+  MyVehiclesRoute: MyVehiclesRoute,
+  RegisterRoute: RegisterRoute,
+  ReportsRoute: ReportsRoute,
+  VehiclesRoute: VehiclesRoute,
+  SessionSessionIdRoute: SessionSessionIdRoute,
+  VehicleVehicleIdRoute: VehicleVehicleIdRoute,
+}
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()

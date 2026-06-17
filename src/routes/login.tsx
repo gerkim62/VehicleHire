@@ -1,0 +1,111 @@
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
+import { useAuth } from "../hooks/useAuth";
+import { Button } from "../components/ui/Button";
+import { Input } from "../components/ui/Input";
+import { Card, CardContent } from "../components/ui/Card";
+import { Car, Mail, Lock } from "lucide-react";
+
+export const Route = createFileRoute("/login")({
+  component: LoginPage,
+});
+
+function LoginPage() {
+  const { login, user } = useAuth();
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  if (user) {
+    navigate({ to: "/dashboard" });
+    return null;
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    try {
+      await login(email, password);
+      navigate({ to: "/dashboard" });
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Login failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12">
+      <div className="w-full max-w-md animate-fade-in">
+        {/* Logo */}
+        <div className="text-center mb-8">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-primary-500/25">
+            <Car className="w-7 h-7 text-white" />
+          </div>
+          <h1 className="text-2xl font-bold text-surface-900">Welcome Back</h1>
+          <p className="text-surface-500 mt-1">Sign in to your VehicleHire account</p>
+        </div>
+
+        <Card>
+          <CardContent className="p-6">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {error && (
+                <div className="p-3 rounded-xl bg-danger-50 text-danger-600 text-sm font-medium">
+                  {error}
+                </div>
+              )}
+
+              <div className="relative">
+                <Mail className="absolute left-3 top-[38px] w-4 h-4 text-surface-400" />
+                <Input
+                  label="Email"
+                  type="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="pl-10"
+                />
+              </div>
+
+              <div className="relative">
+                <Lock className="absolute left-3 top-[38px] w-4 h-4 text-surface-400" />
+                <Input
+                  label="Password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="pl-10"
+                />
+              </div>
+
+              <Button
+                type="submit"
+                isLoading={loading}
+                className="w-full"
+                size="lg"
+              >
+                Sign In
+              </Button>
+            </form>
+
+            <div className="mt-6 text-center text-sm text-surface-500">
+              Don&apos;t have an account?{" "}
+              <Link
+                to="/register"
+                className="text-primary-600 font-medium hover:text-primary-700"
+              >
+                Create one
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
