@@ -1,7 +1,7 @@
 import { useEffect, useRef, useCallback } from "react";
 import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
-import { Id } from "../../convex/_generated/dataModel";
+import type { Id } from "../../convex/_generated/dataModel";
 
 const UPDATE_INTERVAL = 30000; // 30 seconds
 

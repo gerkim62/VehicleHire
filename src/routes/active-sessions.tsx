@@ -9,6 +9,7 @@ import { Button } from "../components/ui/Button";
 import { useState, useEffect, useRef } from "react";
 import { Timer, MapPin, Square } from "lucide-react";
 import { formatDuration, formatCurrency, calculateCharge } from "../lib/utils";
+import type L from "leaflet";
 
 export const Route = createFileRoute("/active-sessions")({
   component: ActiveSessionsPage,
@@ -37,12 +38,12 @@ function ActiveSessionsPage() {
     if (!mapRef.current || !sessions || sessions.length === 0) return;
 
     const loadMap = async () => {
-      const L = await import("leaflet");
+      const leafletModule = await import("leaflet");
       await import("leaflet/dist/leaflet.css");
 
       if (!mapInstanceRef.current && mapRef.current) {
-        mapInstanceRef.current = L.map(mapRef.current).setView([-1.2921, 36.8219], 10);
-        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        mapInstanceRef.current = leafletModule.map(mapRef.current).setView([-1.2921, 36.8219], 10);
+        leafletModule.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
           attribution: "© OpenStreetMap contributors",
         }).addTo(mapInstanceRef.current);
       }
@@ -56,7 +57,7 @@ function ActiveSessionsPage() {
       sessions.forEach((s) => {
         if (s.latestLocation && mapInstanceRef.current) {
           const { latitude, longitude } = s.latestLocation;
-          const marker = L.marker([latitude, longitude])
+          const marker = leafletModule.marker([latitude, longitude])
             .addTo(mapInstanceRef.current!)
             .bindPopup(`
               <strong>${s.vehicle?.make} ${s.vehicle?.model}</strong><br/>
@@ -166,21 +167,4 @@ function ActiveSessionsPage() {
       </main>
     </div>
   );
-}
-
-// Leaflet type stub
-declare global {
-  namespace L {
-    interface Map {
-      setView(center: [number, number], zoom: number): Map;
-      fitBounds(bounds: LatLngBoundsExpression, options?: object): Map;
-      remove(): void;
-    }
-    type LatLngBoundsExpression = [number, number][];
-    interface Marker {
-      addTo(map: Map): Marker;
-      bindPopup(content: string): Marker;
-      remove(): void;
-    }
-  }
 }

@@ -7,7 +7,7 @@ import { Card, CardContent } from "../components/ui/Card";
 import { Badge, Spinner } from "../components/ui/Badge";
 import { Input } from "../components/ui/Input";
 import { useState } from "react";
-import { Search, Users } from "lucide-react";
+import { Search } from "lucide-react";
 import { formatDate } from "../lib/utils";
 
 export const Route = createFileRoute("/manage-users")({
@@ -23,7 +23,7 @@ function ManageUsersPage() {
   if (isLoading) return <div className="flex items-center justify-center min-h-[60vh]"><Spinner className="w-8 h-8" /></div>;
   if (!user || user.role !== "admin") { navigate({ to: "/login" }); return null; }
 
-  const filtered = allUsers?.filter((u) => {
+  const filtered = allUsers?.filter((u: any) => {
     const q = search.toLowerCase();
     return u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q);
   });
@@ -60,7 +60,7 @@ function ManageUsersPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {(filtered || []).map((u) => (
+                    {(filtered || []).map((u: any) => (
                       <tr key={u._id} className="border-b border-surface-50 hover:bg-surface-50 transition-colors">
                         <td className="py-3 px-4">
                           <div className="flex items-center gap-2">

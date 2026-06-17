@@ -56,7 +56,7 @@ function ReportsPage() {
                         </tr>
                       </thead>
                       <tbody>
-                        {revenue.payments.map((p) => (
+                        {revenue.payments.map((p: any) => (
                           <tr key={p._id} className="border-b border-surface-50">
                             <td className="py-2.5">{p.paidAt ? formatDate(p.paidAt) : "—"}</td>
                             <td className="py-2.5 font-medium">{formatCurrency(p.amount)}</td>
@@ -72,12 +72,12 @@ function ReportsPage() {
             )}
 
             {/* Session history */}
-            {sessions && sessions.filter((s) => s.status === "completed").length > 0 && (
+            {sessions && sessions.filter((s: any) => s.status === "completed").length > 0 && (
               <Card>
                 <CardContent>
                   <h3 className="font-semibold text-surface-900 mb-4">Session History</h3>
                   <div className="space-y-2">
-                    {sessions.filter((s) => s.status === "completed").slice(0, 20).map((s) => (
+                    {sessions.filter((s: any) => s.status === "completed").slice(0, 20).map((s: any) => (
                       <div key={s._id} className="flex items-center justify-between py-2 border-b border-surface-50 last:border-0">
                         <div>
                           <p className="text-sm font-medium">{s.vehicle?.make} {s.vehicle?.model}</p>

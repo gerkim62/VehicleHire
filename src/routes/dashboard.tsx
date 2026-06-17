@@ -114,7 +114,7 @@ function ClientDashboard() {
                 <p className="text-sm text-surface-500">You have an active hire session running</p>
               </div>
             </div>
-            <Link to={`/session/${stats.activeSession._id}`}>
+            <Link to="/session/$sessionId" params={{ sessionId: stats.activeSession._id }}>
               <Button size="sm">
                 View Session <ArrowRight className="w-4 h-4" />
               </Button>
@@ -133,7 +133,7 @@ function ClientDashboard() {
           </div>
           {bookings && bookings.length > 0 ? (
             <div className="space-y-3">
-              {bookings.slice(0, 5).map((b) => (
+              {bookings.slice(0, 5).map((b: any) => (
                 <div key={b._id} className="flex items-center justify-between py-2 border-b border-surface-50 last:border-0">
                   <div>
                     <p className="text-sm font-medium text-surface-900">
@@ -190,7 +190,7 @@ function AgentDashboard() {
           <CardContent>
             <h3 className="font-semibold text-surface-900 mb-4">Active Sessions</h3>
             <div className="space-y-3">
-              {activeSessions.map((s) => (
+              {activeSessions.map((s: any) => (
                 <div key={s._id} className="flex items-center justify-between p-3 rounded-xl bg-surface-50">
                   <div>
                     <p className="text-sm font-medium">{s.vehicle?.make} {s.vehicle?.model}</p>

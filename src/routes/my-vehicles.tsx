@@ -49,7 +49,7 @@ function MyVehiclesPage() {
           <Spinner className="w-6 h-6" />
         ) : vehicles.length > 0 ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 animate-fade-in">
-            {vehicles.map((v) => (
+            {vehicles.map((v: any) => (
               <Card key={v._id} className="overflow-hidden">
                 <div className="h-36 bg-gradient-to-br from-surface-100 to-surface-200 flex items-center justify-center">
                   {v.photos.length > 0 ? (

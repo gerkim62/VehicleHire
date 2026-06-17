@@ -46,7 +46,7 @@ function ManageAgentsPage() {
           <Spinner className="w-6 h-6" />
         ) : pendingAgents.length > 0 ? (
           <div className="space-y-4 animate-fade-in">
-            {pendingAgents.map((agent) => (
+            {pendingAgents.map((agent: any) => (
               <Card key={agent._id}>
                 <CardContent>
                   <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">

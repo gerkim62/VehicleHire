@@ -8,7 +8,7 @@ import {
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import type { User } from "../lib/types";
-import { type Id } from "../../convex/_generated/dataModel";
+import type { Id } from "../../convex/_generated/dataModel";
 import { hashPassword } from "../lib/utils";
 
 interface AuthContextType {

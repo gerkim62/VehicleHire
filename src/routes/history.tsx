@@ -35,7 +35,7 @@ function HistoryPage() {
   if (isLoading) return <div className="flex items-center justify-center min-h-[60vh]"><Spinner className="w-8 h-8" /></div>;
   if (!user) { navigate({ to: "/login" }); return null; }
 
-  const completedSessions = sessions?.filter((s) => s.status === "completed") || [];
+  const completedSessions = sessions?.filter((s: any) => s.status === "completed") || [];
 
   const handlePay = async (session: (typeof completedSessions)[0]) => {
     if (!user || !session.totalCharge) return;
@@ -91,7 +91,7 @@ function HistoryPage() {
           <Spinner className="w-6 h-6" />
         ) : completedSessions.length > 0 ? (
           <div className="space-y-4 animate-fade-in">
-            {completedSessions.map((s) => (
+            {completedSessions.map((s: any) => (
               <Card key={s._id}>
                 <CardContent>
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -123,7 +123,7 @@ function HistoryPage() {
                       >
                         <Star className="w-4 h-4" /> Review
                       </Button>
-                      <Link to={`/session/${s._id}`}>
+                      <Link to="/session/$sessionId" params={{ sessionId: s._id }}>
                         <Button size="sm" variant="ghost">View</Button>
                       </Link>
                     </div>

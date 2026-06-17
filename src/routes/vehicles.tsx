@@ -23,7 +23,7 @@ function VehiclesPage() {
   if (isLoading) return <div className="flex items-center justify-center min-h-[60vh]"><Spinner className="w-8 h-8" /></div>;
   if (!user) { navigate({ to: "/login" }); return null; }
 
-  const filtered = vehicles?.filter((v) => {
+  const filtered = vehicles?.filter((v: any) => {
     const q = search.toLowerCase();
     return (
       v.make.toLowerCase().includes(q) ||
@@ -60,8 +60,8 @@ function VehiclesPage() {
           </div>
         ) : filtered && filtered.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
-            {filtered.map((vehicle) => (
-              <Link key={vehicle._id} to={`/vehicle/${vehicle._id}`}>
+            {filtered.map((vehicle: any) => (
+              <Link key={vehicle._id} to="/vehicle/$vehicleId" params={{ vehicleId: vehicle._id }}>
                 <Card hover className="overflow-hidden h-full">
                   <div className="h-44 bg-gradient-to-br from-surface-100 to-surface-200 flex items-center justify-center">
                     {vehicle.photos.length > 0 ? (

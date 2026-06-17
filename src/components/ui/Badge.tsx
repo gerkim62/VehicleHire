@@ -37,13 +37,14 @@ export function Badge({
     >
       {dot && (
         <span
-          className={cn("w-1.5 h-1.5 rounded-full", {
-            "bg-surface-400": variant === "default",
-            "bg-success-500": variant === "success",
-            "bg-warning-500": variant === "warning",
-            "bg-danger-500": variant === "danger",
-            "bg-primary-500": variant === "info",
-          })}
+          className={cn(
+            "w-1.5 h-1.5 rounded-full",
+            variant === "default" && "bg-surface-400",
+            variant === "success" && "bg-success-500",
+            variant === "warning" && "bg-warning-500",
+            variant === "danger" && "bg-danger-500",
+            variant === "info" && "bg-primary-500"
+          )}
         />
       )}
       {children}

@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "../hooks/useAuth";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
-import { Id } from "../../convex/_generated/dataModel";
+import type { Id } from "../../convex/_generated/dataModel";
 import { Sidebar } from "../components/layout/Sidebar";
 import { Card, CardContent } from "../components/ui/Card";
 import { Badge, Spinner, StarDisplay } from "../components/ui/Badge";
@@ -146,7 +146,7 @@ function VehicleDetailPage() {
             </h2>
             {reviews && reviews.length > 0 ? (
               <div className="space-y-4">
-                {reviews.map((review) => (
+                {reviews.map((review: any) => (
                   <div key={review._id} className="p-4 rounded-xl bg-surface-50">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
