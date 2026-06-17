@@ -75,7 +75,7 @@ function VehicleDetailPage() {
 
         {/* Vehicle header */}
         <div className="grid lg:grid-cols-2 gap-6 mb-8">
-          <div className="h-64 lg:h-80 rounded-2xl bg-gradient-to-br from-surface-100 to-surface-200 flex items-center justify-center overflow-hidden">
+          <div className="h-64 lg:h-80 rounded-2xl bg-surface-100 flex items-center justify-center overflow-hidden">
             {vehicle.photos.length > 0 ? (
               <img
                 src={vehicle.photos[0]}
@@ -89,7 +89,7 @@ function VehicleDetailPage() {
 
           <div className="space-y-4">
             <div>
-              <h1 className="text-3xl font-bold text-surface-900">
+              <h1 className="text-3xl font-serif font-medium text-surface-900">
                 {vehicle.make} {vehicle.model}
               </h1>
               <p className="text-surface-500">{vehicle.year}</p>
@@ -141,7 +141,7 @@ function VehicleDetailPage() {
         {/* Reviews */}
         <Card>
           <CardContent>
-            <h2 className="text-lg font-semibold text-surface-900 mb-4 flex items-center gap-2">
+            <h2 className="text-lg font-serif font-medium text-surface-900 mb-4 flex items-center gap-2">
               <Star className="w-5 h-5 text-warning-500" /> Reviews
             </h2>
             {reviews && reviews.length > 0 ? (

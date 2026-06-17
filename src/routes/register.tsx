@@ -63,14 +63,14 @@ function RegisterPage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12">
+    <div className="min-h-[calc(100vh-4rem)] bg-surface-50 flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-lg animate-fade-in">
         <div className="text-center mb-8">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-primary-500/25">
+          <div className="w-14 h-14 rounded-2xl bg-primary-600 flex items-center justify-center mx-auto mb-4 shadow-md shadow-primary-600/10">
             <Car className="w-7 h-7 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-surface-900">Create Account</h1>
-          <p className="text-surface-500 mt-1">Join VehicleHire as a client or agent</p>
+          <h1 className="text-2xl font-serif font-medium text-surface-900">Create Account</h1>
+          <p className="text-surface-500 mt-1 font-serif italic">Join VehicleHire as a client or agent</p>
         </div>
 
         {/* Role selector */}

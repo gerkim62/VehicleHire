@@ -38,8 +38,8 @@ function VehiclesPage() {
       <main className="flex-1 p-6 lg:p-8 max-w-6xl">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-surface-900">Browse Vehicles</h1>
-            <p className="text-surface-500 mt-1">Find and book your next ride</p>
+            <h1 className="text-2xl font-serif font-medium text-surface-900">Browse Vehicles</h1>
+            <p className="text-surface-500 mt-1 font-serif italic">Find and book your next ride</p>
           </div>
           <div className="relative w-full sm:w-72">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400" />
@@ -63,7 +63,7 @@ function VehiclesPage() {
             {filtered.map((vehicle: any) => (
               <Link key={vehicle._id} to="/vehicle/$vehicleId" params={{ vehicleId: vehicle._id }}>
                 <Card hover className="overflow-hidden h-full">
-                  <div className="h-44 bg-gradient-to-br from-surface-100 to-surface-200 flex items-center justify-center">
+                  <div className="h-44 bg-surface-100 flex items-center justify-center">
                     {vehicle.photos.length > 0 ? (
                       <img
                         src={vehicle.photos[0]}

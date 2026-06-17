@@ -64,11 +64,11 @@ export function StatCard({
   color = "primary",
 }: StatCardProps) {
   const colorMap = {
-    primary: "from-primary-500 to-primary-600 shadow-primary-500/25",
-    success: "from-success-500 to-success-600 shadow-success-500/25",
-    warning: "from-warning-500 to-warning-600 shadow-warning-500/25",
-    danger: "from-danger-500 to-danger-600 shadow-danger-500/25",
-    accent: "from-accent-500 to-accent-600 shadow-accent-500/25",
+    primary: "bg-primary-600 shadow-primary-600/10",
+    success: "bg-success-600 shadow-success-600/10",
+    warning: "bg-warning-600 shadow-warning-600/10",
+    danger: "bg-danger-600 shadow-danger-600/10",
+    accent: "bg-accent-600 shadow-accent-600/10",
   };
 
   return (
@@ -76,7 +76,7 @@ export function StatCard({
       <CardContent className="flex items-center gap-4">
         <div
           className={cn(
-            "flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br text-white shadow-lg",
+            "flex items-center justify-center w-12 h-12 rounded-xl text-white shadow-lg",
             colorMap[color]
           )}
         >

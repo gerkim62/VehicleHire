@@ -1,53 +1,54 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap");
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  --font-serif: "Cormorant Garamond", Georgia, serif;
 
-  --color-primary-50: #eef2ff;
-  --color-primary-100: #e0e7ff;
-  --color-primary-200: #c7d2fe;
-  --color-primary-300: #a5b4fc;
-  --color-primary-400: #818cf8;
-  --color-primary-500: #6366f1;
-  --color-primary-600: #4f46e5;
-  --color-primary-700: #4338ca;
-  --color-primary-800: #3730a3;
-  --color-primary-900: #312e81;
+  --color-primary-50: #FAF0EB;
+  --color-primary-100: #FCE3D6;
+  --color-primary-200: #F8C6AF;
+  --color-primary-300: #F2A180;
+  --color-primary-400: #EB7F52;
+  --color-primary-500: #C05A1A;
+  --color-primary-600: #A64B14;
+  --color-primary-700: #873C0F;
+  --color-primary-800: #672E0C;
+  --color-primary-900: #4C2209;
 
-  --color-accent-50: #fdf4ff;
-  --color-accent-100: #fae8ff;
-  --color-accent-200: #f5d0fe;
-  --color-accent-300: #f0abfc;
-  --color-accent-400: #e879f9;
-  --color-accent-500: #d946ef;
-  --color-accent-600: #c026d3;
-  --color-accent-700: #a21caf;
+  --color-accent-50: #FAF0EB;
+  --color-accent-100: #FCE3D6;
+  --color-accent-200: #F8C6AF;
+  --color-accent-300: #F2A180;
+  --color-accent-400: #EB7F52;
+  --color-accent-500: #C05A1A;
+  --color-accent-600: #A64B14;
+  --color-accent-700: #873C0F;
 
-  --color-success-50: #ecfdf5;
-  --color-success-500: #10b981;
-  --color-success-600: #059669;
+  --color-success-50: #FAF8F5;
+  --color-success-500: #1A6B55;
+  --color-success-600: #104C3C;
 
-  --color-warning-50: #fffbeb;
-  --color-warning-500: #f59e0b;
-  --color-warning-600: #d97706;
+  --color-warning-50: #FFFDF9;
+  --color-warning-500: #D4AF37;
+  --color-warning-600: #AA8B1B;
 
-  --color-danger-50: #fef2f2;
-  --color-danger-500: #ef4444;
-  --color-danger-600: #dc2626;
+  --color-danger-50: #FFF5F2;
+  --color-danger-500: #C24A3F;
+  --color-danger-600: #933027;
 
-  --color-surface-0: #ffffff;
-  --color-surface-50: #f8fafc;
-  --color-surface-100: #f1f5f9;
-  --color-surface-200: #e2e8f0;
-  --color-surface-300: #cbd5e1;
-  --color-surface-400: #94a3b8;
-  --color-surface-500: #64748b;
-  --color-surface-600: #475569;
-  --color-surface-700: #334155;
-  --color-surface-800: #1e293b;
-  --color-surface-900: #0f172a;
-  --color-surface-950: #020617;
+  --color-surface-0: #FFFFFF;
+  --color-surface-50: #FAF6F0;
+  --color-surface-100: #F0E8DC;
+  --color-surface-200: #E6DBCA;
+  --color-surface-300: #DDD0BC;
+  --color-surface-400: #BEAE9A;
+  --color-surface-500: #A08060;
+  --color-surface-600: #80664C;
+  --color-surface-700: #604C39;
+  --color-surface-800: #403225;
+  --color-surface-900: #231A0E;
+  --color-surface-950: #140E08;
 }
 
 html {
@@ -146,10 +147,10 @@ body {
 
 /* Glass morphism */
 .glass {
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(250, 246, 240, 0.75);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(221, 208, 188, 0.4);
 }
 
 /* Leaflet map overrides */

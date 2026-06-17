@@ -37,8 +37,8 @@ function MyVehiclesPage() {
       <main className="flex-1 p-6 lg:p-8 max-w-5xl">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-surface-900">My Vehicles</h1>
-            <p className="text-surface-500 mt-1">Manage your fleet</p>
+            <h1 className="text-2xl font-serif font-medium text-surface-900">My Vehicles</h1>
+            <p className="text-surface-500 mt-1 font-serif italic">Manage your fleet</p>
           </div>
           <Link to="/add-vehicle">
             <Button><Plus className="w-4 h-4" /> Add Vehicle</Button>
@@ -51,7 +51,7 @@ function MyVehiclesPage() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 animate-fade-in">
             {vehicles.map((v: any) => (
               <Card key={v._id} className="overflow-hidden">
-                <div className="h-36 bg-gradient-to-br from-surface-100 to-surface-200 flex items-center justify-center">
+                <div className="h-36 bg-surface-100 flex items-center justify-center">
                   {v.photos.length > 0 ? (
                     <img src={v.photos[0]} alt={`${v.make} ${v.model}`} className="w-full h-full object-cover" />
                   ) : (

@@ -38,15 +38,15 @@ function LoginPage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12">
+    <div className="min-h-[calc(100vh-4rem)] bg-surface-50 flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md animate-fade-in">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-primary-500/25">
+          <div className="w-14 h-14 rounded-2xl bg-primary-600 flex items-center justify-center mx-auto mb-4 shadow-md shadow-primary-600/10">
             <Car className="w-7 h-7 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-surface-900">Welcome Back</h1>
-          <p className="text-surface-500 mt-1">Sign in to your VehicleHire account</p>
+          <h1 className="text-2xl font-serif font-medium text-surface-900">Welcome Back</h1>
+          <p className="text-surface-500 mt-1 font-serif italic">Sign in to your VehicleHire account</p>
         </div>
 
         <Card>

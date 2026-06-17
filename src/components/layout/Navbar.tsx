@@ -36,10 +36,10 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center shadow-md shadow-primary-500/20 group-hover:shadow-lg group-hover:shadow-primary-500/30 transition-shadow">
+            <div className="w-9 h-9 rounded-xl bg-primary-600 flex items-center justify-center shadow-sm group-hover:bg-primary-700 transition-colors">
               <Car className="w-5 h-5 text-white" />
             </div>
-            <span className="text-lg font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
+            <span className="text-lg font-bold text-surface-900 font-serif tracking-tight">
               VehicleHire
             </span>
           </Link>
@@ -83,7 +83,7 @@ export function Navbar() {
                       {user.role}
                     </Badge>
                   </div>
-                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-400 to-accent-400 flex items-center justify-center text-white text-sm font-semibold">
+                  <div className="w-9 h-9 rounded-xl bg-primary-500 flex items-center justify-center text-white text-sm font-semibold">
                     {user.avatarUrl ? (
                       <img
                         src={user.avatarUrl}
@@ -143,7 +143,7 @@ export function Navbar() {
             ) : (
               <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-3 px-4 py-2">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-400 to-accent-400 flex items-center justify-center text-white text-sm font-semibold">
+                  <div className="w-10 h-10 rounded-xl bg-primary-500 flex items-center justify-center text-white text-sm font-semibold">
                     <User className="w-5 h-5" />
                   </div>
                   <div>
