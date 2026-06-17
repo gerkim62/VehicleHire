@@ -51,7 +51,7 @@ function LandingPage() {
             <div className="flex flex-wrap gap-4">
               {user ? (
                 <Link to="/dashboard">
-                  <Button size="lg" className="bg-surface-50 text-primary-900 hover:bg-surface-100 shadow-md">
+                  <Button size="lg" variant="light">
                     Go to Dashboard
                     <ArrowRight className="w-5 h-5" />
                   </Button>
@@ -59,17 +59,13 @@ function LandingPage() {
               ) : (
                 <>
                   <Link to="/register">
-                    <Button size="lg" className="bg-surface-50 text-primary-900 hover:bg-surface-100 shadow-md">
+                    <Button size="lg" variant="light">
                       Get Started Free
                       <ArrowRight className="w-5 h-5" />
                     </Button>
                   </Link>
                   <Link to="/login">
-                    <Button
-                      size="lg"
-                      variant="outline"
-                      className="border-surface-700 text-surface-100 hover:bg-white/10"
-                    >
+                    <Button size="lg" variant="outline-light">
                       Sign In
                     </Button>
                   </Link>
@@ -194,7 +190,7 @@ function LandingPage() {
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link to="/register">
-              <Button size="lg" className="bg-surface-50 text-primary-900 hover:bg-surface-100 shadow-md">
+              <Button size="lg" variant="light">
                 <CheckCircle className="w-5 h-5" />
                 Sign Up Now
               </Button>
