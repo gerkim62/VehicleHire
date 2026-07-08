@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
+import { useToast } from "../components/ui/Toast";
 import { Button } from "../components/ui/Button";
 import { Input, Textarea } from "../components/ui/Input";
 import { Card, CardContent } from "../components/ui/Card";
@@ -15,9 +16,16 @@ export const Route = createFileRoute("/register")({
 function RegisterPage() {
   const { register, user } = useAuth();
   const navigate = useNavigate();
+  const { error: toastError } = useToast();
   const [role, setRole] = useState<"client" | "agent">("client");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (error) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [error]);
 
   const [form, setForm] = useState({
     name: "",
@@ -58,7 +66,9 @@ function RegisterPage() {
       });
       navigate({ to: "/dashboard" });
     } catch (err: unknown) {
-      setError(getErrorMessage(err));
+      const msg = getErrorMessage(err);
+      setError(msg);
+      toastError(msg);
     } finally {
       setLoading(false);
     }
@@ -109,7 +119,10 @@ function RegisterPage() {
             <GoogleSignInButton
               role={role}
               onSuccess={() => navigate({ to: "/dashboard" })}
-              onError={(e) => setError(e)}
+              onError={(e) => {
+                setError(e);
+                toastError(e);
+              }}
             />
 
             <div className="relative my-5">
