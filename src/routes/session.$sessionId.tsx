@@ -237,9 +237,12 @@ function SessionPage() {
 
         {/* Active session GPS notice */}
         {isActive && (
-          <div className="mt-6 p-4 rounded-2xl bg-primary-50 border border-primary-100 text-center">
-            <p className="text-sm text-primary-700">
-              🔴 Your GPS location is being shared with the agent for fleet tracking. The session will be ended by the agent when you return the vehicle.
+          <div className="mt-6 p-4 rounded-2xl bg-primary-50 border border-primary-100 text-center animate-pulse">
+            <p className="text-sm text-primary-700 font-medium">
+              {user.role === "client"
+                ? "🔴 Your GPS location is being shared with the agent for fleet tracking. The session will be ended by the agent when you return the vehicle."
+                : "🔴 The client's GPS location is being tracked for fleet safety. You can end the session once the vehicle is returned."
+              }
             </p>
           </div>
         )}
