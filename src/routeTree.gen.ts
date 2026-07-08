@@ -20,6 +20,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as HistoryRouteImport } from './routes/history'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as BookingsRouteImport } from './routes/bookings'
+import { Route as BookingSuccessRouteImport } from './routes/booking-success'
 import { Route as AllSessionsRouteImport } from './routes/all-sessions'
 import { Route as AgentReviewsRouteImport } from './routes/agent-reviews'
 import { Route as AgentBookingsRouteImport } from './routes/agent-bookings'
@@ -85,6 +86,11 @@ const BookingsRoute = BookingsRouteImport.update({
   path: '/bookings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BookingSuccessRoute = BookingSuccessRouteImport.update({
+  id: '/booking-success',
+  path: '/booking-success',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AllSessionsRoute = AllSessionsRouteImport.update({
   id: '/all-sessions',
   path: '/all-sessions',
@@ -139,6 +145,7 @@ export interface FileRoutesByFullPath {
   '/agent-bookings': typeof AgentBookingsRoute
   '/agent-reviews': typeof AgentReviewsRoute
   '/all-sessions': typeof AllSessionsRoute
+  '/booking-success': typeof BookingSuccessRoute
   '/bookings': typeof BookingsRoute
   '/dashboard': typeof DashboardRoute
   '/history': typeof HistoryRoute
@@ -161,6 +168,7 @@ export interface FileRoutesByTo {
   '/agent-bookings': typeof AgentBookingsRoute
   '/agent-reviews': typeof AgentReviewsRoute
   '/all-sessions': typeof AllSessionsRoute
+  '/booking-success': typeof BookingSuccessRoute
   '/bookings': typeof BookingsRoute
   '/dashboard': typeof DashboardRoute
   '/history': typeof HistoryRoute
@@ -184,6 +192,7 @@ export interface FileRoutesById {
   '/agent-bookings': typeof AgentBookingsRoute
   '/agent-reviews': typeof AgentReviewsRoute
   '/all-sessions': typeof AllSessionsRoute
+  '/booking-success': typeof BookingSuccessRoute
   '/bookings': typeof BookingsRoute
   '/dashboard': typeof DashboardRoute
   '/history': typeof HistoryRoute
@@ -208,6 +217,7 @@ export interface FileRouteTypes {
     | '/agent-bookings'
     | '/agent-reviews'
     | '/all-sessions'
+    | '/booking-success'
     | '/bookings'
     | '/dashboard'
     | '/history'
@@ -230,6 +240,7 @@ export interface FileRouteTypes {
     | '/agent-bookings'
     | '/agent-reviews'
     | '/all-sessions'
+    | '/booking-success'
     | '/bookings'
     | '/dashboard'
     | '/history'
@@ -252,6 +263,7 @@ export interface FileRouteTypes {
     | '/agent-bookings'
     | '/agent-reviews'
     | '/all-sessions'
+    | '/booking-success'
     | '/bookings'
     | '/dashboard'
     | '/history'
@@ -275,6 +287,7 @@ export interface RootRouteChildren {
   AgentBookingsRoute: typeof AgentBookingsRoute
   AgentReviewsRoute: typeof AgentReviewsRoute
   AllSessionsRoute: typeof AllSessionsRoute
+  BookingSuccessRoute: typeof BookingSuccessRoute
   BookingsRoute: typeof BookingsRoute
   DashboardRoute: typeof DashboardRoute
   HistoryRoute: typeof HistoryRoute
@@ -369,6 +382,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BookingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/booking-success': {
+      id: '/booking-success'
+      path: '/booking-success'
+      fullPath: '/booking-success'
+      preLoaderRoute: typeof BookingSuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/all-sessions': {
       id: '/all-sessions'
       path: '/all-sessions'
@@ -443,6 +463,7 @@ const rootRouteChildren: RootRouteChildren = {
   AgentBookingsRoute: AgentBookingsRoute,
   AgentReviewsRoute: AgentReviewsRoute,
   AllSessionsRoute: AllSessionsRoute,
+  BookingSuccessRoute: BookingSuccessRoute,
   BookingsRoute: BookingsRoute,
   DashboardRoute: DashboardRoute,
   HistoryRoute: HistoryRoute,

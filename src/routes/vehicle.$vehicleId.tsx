@@ -54,12 +54,12 @@ export function VehicleDetailPage() {
     setBooking(true);
     setBookingError("");
     try {
-      await createBooking({
+      const bookingId = await createBooking({
         clientId: user._id,
         vehicleId: vehicle._id,
         pickupDate: Date.now(),
       });
-      navigate({ to: "/bookings" });
+      navigate({ to: "/booking-success", search: { bookingId } });
     } catch (err: unknown) {
       const msg = getErrorMessage(err);
       setBookingError(msg);
