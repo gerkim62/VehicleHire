@@ -17,6 +17,9 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import { formatCurrency, formatDate } from "../lib/utils";
+import type { Review } from "../lib/types";
+
+type EnrichedReview = Review & { clientName: string; clientAvatar?: string };
 
 export const Route = createFileRoute("/vehicle/$vehicleId")({
   component: VehicleDetailPage,
@@ -146,7 +149,7 @@ function VehicleDetailPage() {
             </h2>
             {reviews && reviews.length > 0 ? (
               <div className="space-y-4">
-                {reviews.map((review: any) => (
+                {reviews.map((review: EnrichedReview) => (
                   <div key={review._id} className="p-4 rounded-xl bg-surface-50">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">

@@ -115,7 +115,11 @@ function SessionPage() {
           }
         },
         onClose: async () => {
-          try { await markPaymentFailed({ paystackReference: ref }); } catch {}
+          try {
+            await markPaymentFailed({ paystackReference: ref });
+          } catch (e) {
+            console.error("Failed to cancel payment record:", e);
+          }
           toast("Payment was cancelled.", "warning");
         },
       });

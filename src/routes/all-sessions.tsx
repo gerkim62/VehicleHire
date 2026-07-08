@@ -17,7 +17,7 @@ function AllSessionsPage() {
   const { user, isLoading } = useAuth();
   const navigate = useNavigate();
   const sessions = useQuery(api.sessions.getAllActive);
-  const [now, setNow] = useState(Date.now());
+  const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 1000);

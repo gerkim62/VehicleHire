@@ -14,6 +14,9 @@ import { useState } from "react";
 import { History as HistoryIcon, Star, CreditCard, CheckCircle } from "lucide-react";
 import { formatCurrency, formatDuration, formatDate, generateReference } from "../lib/utils";
 import type { Id } from "../../convex/_generated/dataModel";
+import type { Session, Vehicle, User as DBUser } from "../lib/types";
+
+type EnrichedSession = Session & { vehicle?: Vehicle | null; agent?: DBUser | null };
 
 export const Route = createFileRoute("/history")({
   component: HistoryPage,
@@ -40,9 +43,9 @@ function HistoryPage() {
   if (isLoading) return <div className="flex items-center justify-center min-h-[60vh]"><Spinner className="w-8 h-8" /></div>;
   if (!user) { navigate({ to: "/login" }); return null; }
 
-  const completedSessions = sessions?.filter((s: any) => s.status === "completed") || [];
+  const completedSessions = sessions?.filter((s: EnrichedSession) => s.status === "completed") || [];
 
-  const handlePay = async (session: (typeof completedSessions)[0]) => {
+  const handlePay = async (session: EnrichedSession) => {
     if (!user || !session.totalCharge) return;
     setPayingSession(session._id);
 
@@ -128,7 +131,7 @@ function HistoryPage() {
           <Spinner className="w-6 h-6" />
         ) : completedSessions.length > 0 ? (
           <div className="space-y-4 animate-fade-in">
-            {completedSessions.map((s: any) => (
+            {completedSessions.map((s: EnrichedSession) => (
               <SessionCard
                 key={s._id}
                 session={s}
@@ -201,9 +204,9 @@ function SessionCard({
   onReview,
   payingSession,
 }: {
-  session: any;
+  session: EnrichedSession;
   userId: Id<"users">;
-  onPay: (s: any) => void;
+  onPay: (s: EnrichedSession) => void;
   onReview: (id: string) => void;
   payingSession: string | null;
 }) {

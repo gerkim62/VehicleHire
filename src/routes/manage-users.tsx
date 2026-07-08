@@ -9,6 +9,7 @@ import { Input } from "../components/ui/Input";
 import { useState } from "react";
 import { Search } from "lucide-react";
 import { formatDate } from "../lib/utils";
+import type { User } from "../lib/types";
 
 export const Route = createFileRoute("/manage-users")({
   component: ManageUsersPage,
@@ -23,7 +24,7 @@ function ManageUsersPage() {
   if (isLoading) return <div className="flex items-center justify-center min-h-[60vh]"><Spinner className="w-8 h-8" /></div>;
   if (!user || user.role !== "admin") { navigate({ to: "/login" }); return null; }
 
-  const filtered = allUsers?.filter((u: any) => {
+  const filtered = allUsers?.filter((u: User) => {
     const q = search.toLowerCase();
     return u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q);
   });
@@ -60,7 +61,7 @@ function ManageUsersPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {(filtered || []).map((u: any) => (
+                    {(filtered || []).map((u: User) => (
                       <tr key={u._id} className="border-b border-surface-50 hover:bg-surface-50 transition-colors">
                         <td className="py-3 px-4">
                           <div className="flex items-center gap-2">

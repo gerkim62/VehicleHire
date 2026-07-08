@@ -9,6 +9,7 @@ import { Input } from "../components/ui/Input";
 import { useState } from "react";
 import { Car, Search, Users as UsersIcon, Clock } from "lucide-react";
 import { formatCurrency } from "../lib/utils";
+import type { Vehicle } from "../lib/types";
 
 export const Route = createFileRoute("/vehicles")({
   component: VehiclesPage,
@@ -23,7 +24,7 @@ function VehiclesPage() {
   if (isLoading) return <div className="flex items-center justify-center min-h-[60vh]"><Spinner className="w-8 h-8" /></div>;
   if (!user) { navigate({ to: "/login" }); return null; }
 
-  const filtered = vehicles?.filter((v: any) => {
+  const filtered = vehicles?.filter((v: Vehicle) => {
     const q = search.toLowerCase();
     return (
       v.make.toLowerCase().includes(q) ||
@@ -60,7 +61,7 @@ function VehiclesPage() {
           </div>
         ) : filtered && filtered.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
-            {filtered.map((vehicle: any) => (
+            {filtered.map((vehicle: Vehicle) => (
               <Link key={vehicle._id} to="/vehicle/$vehicleId" params={{ vehicleId: vehicle._id }}>
                 <Card hover className="overflow-hidden h-full">
                   <div className="h-44 bg-surface-100 flex items-center justify-center">

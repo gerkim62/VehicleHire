@@ -9,6 +9,7 @@ import { Button } from "../components/ui/Button";
 import { useState } from "react";
 import { Shield, Check, X as XIcon } from "lucide-react";
 import { formatDate } from "../lib/utils";
+import type { User } from "../lib/types";
 
 export const Route = createFileRoute("/manage-agents")({
   component: ManageAgentsPage,
@@ -46,7 +47,7 @@ function ManageAgentsPage() {
           <Spinner className="w-6 h-6" />
         ) : pendingAgents.length > 0 ? (
           <div className="space-y-4 animate-fade-in">
-            {pendingAgents.map((agent: any) => (
+            {pendingAgents.map((agent: User) => (
               <Card key={agent._id}>
                 <CardContent>
                   <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">

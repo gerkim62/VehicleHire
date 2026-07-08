@@ -18,6 +18,7 @@ import {
   Shield,
 } from "lucide-react";
 import { formatCurrency, formatRelativeTime } from "../lib/utils";
+import type { Booking, Vehicle, Session, User as DBUser } from "../lib/types";
 
 export const Route = createFileRoute("/dashboard")({
   component: DashboardPage,
@@ -133,7 +134,7 @@ function ClientDashboard() {
           </div>
           {bookings && bookings.length > 0 ? (
             <div className="space-y-3">
-              {bookings.slice(0, 5).map((b: any) => (
+              {bookings.slice(0, 5).map((b: Booking & { vehicle?: Vehicle | null }) => (
                 <div key={b._id} className="flex items-center justify-between py-2 border-b border-surface-50 last:border-0">
                   <div>
                     <p className="text-sm font-medium text-surface-900">
@@ -190,7 +191,7 @@ function AgentDashboard() {
           <CardContent>
             <h3 className="font-semibold text-surface-900 mb-4">Active Sessions</h3>
             <div className="space-y-3">
-              {activeSessions.map((s: any) => (
+              {activeSessions.map((s: Session & { vehicle?: Vehicle | null; client?: DBUser | null }) => (
                 <div key={s._id} className="flex items-center justify-between p-3 rounded-xl bg-surface-50">
                   <div>
                     <p className="text-sm font-medium">{s.vehicle?.make} {s.vehicle?.model}</p>
