@@ -4,7 +4,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import { routeTree } from "./routeTree.gen";
-import { AuthProvider } from "./hooks/useAuth";
+import { AuthProvider } from "./context/AuthProvider";
 import { ToastProvider } from "./components/ui/Toast";
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);

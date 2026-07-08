@@ -12,7 +12,7 @@ export const Route = createFileRoute("/admin-reports")({
   component: AdminReportsPage,
 });
 
-function AdminReportsPage() {
+export function AdminReportsPage() {
   const { user, isLoading } = useAuth();
   const navigate = useNavigate();
   const stats = useQuery(api.reports.getPlatformStats);

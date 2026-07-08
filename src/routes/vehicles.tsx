@@ -15,7 +15,7 @@ export const Route = createFileRoute("/vehicles")({
   component: VehiclesPage,
 });
 
-function VehiclesPage() {
+export function VehiclesPage() {
   const { user, isLoading } = useAuth();
   const navigate = useNavigate();
   const vehicles = useQuery(api.vehicles.getAvailableWithUrls);

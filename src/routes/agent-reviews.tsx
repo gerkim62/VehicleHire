@@ -12,7 +12,7 @@ export const Route = createFileRoute("/agent-reviews")({
   component: AgentReviewsPage,
 });
 
-function AgentReviewsPage() {
+export function AgentReviewsPage() {
   const { user, isLoading } = useAuth();
   const navigate = useNavigate();
   const reviews = useQuery(api.reviews.getByAgent, user ? { agentId: user._id } : "skip");

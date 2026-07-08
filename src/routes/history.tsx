@@ -9,7 +9,7 @@ import { Button } from "../components/ui/Button";
 import { Modal } from "../components/ui/Modal";
 import { Textarea } from "../components/ui/Input";
 import { usePaystack } from "../hooks/usePaystack";
-import { useToast } from "../components/ui/Toast";
+import { useToast } from "../hooks/useToast";
 import { useState } from "react";
 import { History as HistoryIcon, Star, CreditCard, CheckCircle } from "lucide-react";
 import { formatCurrency, formatDuration, formatDate, generateReference, getErrorMessage } from "../lib/utils";
@@ -22,7 +22,7 @@ export const Route = createFileRoute("/history")({
   component: HistoryPage,
 });
 
-function HistoryPage() {
+export function HistoryPage() {
   const { user, isLoading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();

@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
-import { useToast } from "../components/ui/Toast";
+import { useToast } from "../hooks/useToast";
 import { Button } from "../components/ui/Button";
 import { Input, Textarea } from "../components/ui/Input";
 import { Card, CardContent } from "../components/ui/Card";
@@ -13,7 +13,7 @@ export const Route = createFileRoute("/register")({
   component: RegisterPage,
 });
 
-function RegisterPage() {
+export function RegisterPage() {
   const { register, user } = useAuth();
   const navigate = useNavigate();
   const { error: toastError } = useToast();

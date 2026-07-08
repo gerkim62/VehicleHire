@@ -15,7 +15,7 @@ export const Route = createFileRoute("/manage-users")({
   component: ManageUsersPage,
 });
 
-function ManageUsersPage() {
+export function ManageUsersPage() {
   const { user, isLoading } = useAuth();
   const navigate = useNavigate();
   const allUsers = useQuery(api.users.getAllUsers);

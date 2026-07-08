@@ -7,7 +7,7 @@ import { Card, CardContent } from "../components/ui/Card";
 import { Badge, Spinner, EmptyState } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
 import { Modal } from "../components/ui/Modal";
-import { useToast } from "../components/ui/Toast";
+import { useToast } from "../hooks/useToast";
 import { useState } from "react";
 import { CalendarCheck, Play, X as XIcon } from "lucide-react";
 import { formatRelativeTime, formatCurrency, getErrorMessage } from "../lib/utils";
@@ -16,7 +16,7 @@ export const Route = createFileRoute("/agent-bookings")({
   component: AgentBookingsPage,
 });
 
-function AgentBookingsPage() {
+export function AgentBookingsPage() {
   const { user, isLoading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();

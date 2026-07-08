@@ -16,7 +16,7 @@ export const Route = createFileRoute("/")({
   component: LandingPage,
 });
 
-function LandingPage() {
+export function LandingPage() {
   const { user } = useAuth();
 
   return (

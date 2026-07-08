@@ -10,13 +10,13 @@ import { useState } from "react";
 import { Shield, Check, X as XIcon } from "lucide-react";
 import { formatDate, getErrorMessage } from "../lib/utils";
 import type { User } from "../lib/types";
-import { useToast } from "../components/ui/Toast";
+import { useToast } from "../hooks/useToast";
 
 export const Route = createFileRoute("/manage-agents")({
   component: ManageAgentsPage,
 });
 
-function ManageAgentsPage() {
+export function ManageAgentsPage() {
   const { user, isLoading } = useAuth();
   const navigate = useNavigate();
   const pendingAgents = useQuery(api.users.getPendingAgents);

@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
-import { useToast } from "../components/ui/Toast";
+import { useToast } from "../hooks/useToast";
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
 import { Card, CardContent } from "../components/ui/Card";
@@ -13,7 +13,7 @@ export const Route = createFileRoute("/login")({
   component: LoginPage,
 });
 
-function LoginPage() {
+export function LoginPage() {
   const { login, user } = useAuth();
   const navigate = useNavigate();
   const { error: toastError } = useToast();

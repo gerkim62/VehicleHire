@@ -9,14 +9,14 @@ import { Input, Textarea, Select } from "../components/ui/Input";
 import { Spinner } from "../components/ui/Badge";
 import { useState, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
-import { useToast } from "../components/ui/Toast";
+import { useToast } from "../hooks/useToast";
 import { getErrorMessage } from "../lib/utils";
 
 export const Route = createFileRoute("/add-vehicle")({
   component: AddVehiclePage,
 });
 
-function AddVehiclePage() {
+export function AddVehiclePage() {
   const { user, isLoading } = useAuth();
   const navigate = useNavigate();
   const createVehicle = useMutation(api.vehicles.create);

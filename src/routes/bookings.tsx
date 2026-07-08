@@ -12,7 +12,7 @@ export const Route = createFileRoute("/bookings")({
   component: BookingsPage,
 });
 
-function BookingsPage() {
+export function BookingsPage() {
   const { user, isLoading } = useAuth();
   const navigate = useNavigate();
   const bookings = useQuery(api.bookings.getByClient, user ? { clientId: user._id } : "skip");
@@ -60,8 +60,8 @@ function BookingsPage() {
                     >
                       {b.status}
                     </Badge>
-                    {b.status === "confirmed" && (
-                      <Link to="/vehicle/$vehicleId" params={{ vehicleId: b.vehicleId } as unknown as Record<string, string>} className="text-xs text-primary-600 hover:underline">
+                    {b.status === "confirmed" && b.sessionId && (
+                      <Link to="/session/$sessionId" params={{ sessionId: b.sessionId } as unknown as Record<string, string>} className="text-xs text-primary-600 hover:underline">
                         View
                       </Link>
                     )}

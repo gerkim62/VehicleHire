@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { formatCurrency, formatDate, getErrorMessage } from "../lib/utils";
 import type { Review } from "../lib/types";
-import { useToast } from "../components/ui/Toast";
+import { useToast } from "../hooks/useToast";
 
 type EnrichedReview = Review & { clientName: string; clientAvatar?: string };
 
@@ -26,7 +26,7 @@ export const Route = createFileRoute("/vehicle/$vehicleId")({
   component: VehicleDetailPage,
 });
 
-function VehicleDetailPage() {
+export function VehicleDetailPage() {
   const { vehicleId } = Route.useParams();
   const { user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();

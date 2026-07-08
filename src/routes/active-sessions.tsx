@@ -7,7 +7,7 @@ import { Card, CardContent } from "../components/ui/Card";
 import { Badge, Spinner, EmptyState } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
 import { Modal } from "../components/ui/Modal";
-import { useToast } from "../components/ui/Toast";
+import { useToast } from "../hooks/useToast";
 import { useState, useEffect, useRef } from "react";
 import { Timer, MapPin, Square } from "lucide-react";
 import { formatDuration, formatCurrency, calculateCharge, getErrorMessage } from "../lib/utils";
@@ -17,7 +17,7 @@ export const Route = createFileRoute("/active-sessions")({
   component: ActiveSessionsPage,
 });
 
-function ActiveSessionsPage() {
+export function ActiveSessionsPage() {
   const { user, isLoading } = useAuth();
   const navigate = useNavigate();
   const sessions = useQuery(api.sessions.getActiveByAgent, user ? { agentId: user._id } : "skip");

@@ -16,7 +16,7 @@ export const Route = createFileRoute("/oauth-success")({
  * user lands here directly (e.g., bookmarked) by checking auth state
  * and redirecting appropriately.
  */
-function OAuthSuccessPage() {
+export function OAuthSuccessPage() {
   const { user, isLoading } = useAuth();
   const navigate = useNavigate();
 

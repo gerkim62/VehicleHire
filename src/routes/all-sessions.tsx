@@ -13,7 +13,7 @@ export const Route = createFileRoute("/all-sessions")({
   component: AllSessionsPage,
 });
 
-function AllSessionsPage() {
+export function AllSessionsPage() {
   const { user, isLoading } = useAuth();
   const navigate = useNavigate();
   const sessions = useQuery(api.sessions.getAllActive);
