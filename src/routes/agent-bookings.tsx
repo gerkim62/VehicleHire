@@ -6,6 +6,8 @@ import { Sidebar } from "../components/layout/Sidebar";
 import { Card, CardContent } from "../components/ui/Card";
 import { Badge, Spinner, EmptyState } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
+import { Modal } from "../components/ui/Modal";
+import { useToast } from "../components/ui/Toast";
 import { useState } from "react";
 import { CalendarCheck, Play, X as XIcon } from "lucide-react";
 import { formatRelativeTime, formatCurrency } from "../lib/utils";
@@ -17,11 +19,13 @@ export const Route = createFileRoute("/agent-bookings")({
 function AgentBookingsPage() {
   const { user, isLoading } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const bookings = useQuery(api.bookings.getByAgent, user ? { agentId: user._id } : "skip");
   const startSession = useMutation(api.sessions.start);
   const cancelBooking = useMutation(api.bookings.cancel);
 
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [cancelConfirm, setCancelConfirm] = useState<string | null>(null); // bookingId to cancel
 
   if (isLoading) return <div className="flex items-center justify-center min-h-[60vh]"><Spinner className="w-8 h-8" /></div>;
   if (!user || user.role !== "agent") { navigate({ to: "/login" }); return null; }
@@ -30,21 +34,23 @@ function AgentBookingsPage() {
     setActionLoading(bookingId);
     try {
       const sessionId = await startSession({ bookingId: bookingId as never, agentId: user._id });
+      toast("Session started!", "success");
       navigate({ to: `/session/${sessionId}` });
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Failed to start session");
+      toast(err instanceof Error ? err.message : "Failed to start session", "error");
     } finally {
       setActionLoading(null);
     }
   };
 
   const handleCancel = async (bookingId: string) => {
-    if (!confirm("Cancel this booking?")) return;
+    setCancelConfirm(null);
     setActionLoading(bookingId);
     try {
       await cancelBooking({ bookingId: bookingId as never, userId: user._id });
+      toast("Booking cancelled.", "info");
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Failed to cancel");
+      toast(err instanceof Error ? err.message : "Failed to cancel", "error");
     } finally {
       setActionLoading(null);
     }
@@ -52,6 +58,7 @@ function AgentBookingsPage() {
 
   const pending = bookings?.filter((b) => b.status === "pending" || b.status === "confirmed") || [];
   const past = bookings?.filter((b) => b.status === "cancelled") || [];
+  const cancelTarget = bookings?.find((b) => b._id === cancelConfirm);
 
   return (
     <div className="flex">
@@ -94,7 +101,7 @@ function AgentBookingsPage() {
                     <Button
                       size="sm"
                       variant="ghost"
-                      onClick={() => handleCancel(b._id)}
+                      onClick={() => setCancelConfirm(b._id)}
                     >
                       <XIcon className="w-3.5 h-3.5" />
                     </Button>
@@ -124,6 +131,31 @@ function AgentBookingsPage() {
             ))}
           </div>
         )}
+
+        {/* Cancel confirmation modal */}
+        <Modal
+          isOpen={!!cancelConfirm}
+          onClose={() => setCancelConfirm(null)}
+          title="Cancel Booking"
+        >
+          <div className="space-y-4">
+            <p className="text-surface-700">
+              Are you sure you want to cancel the booking for{" "}
+              <strong>{cancelTarget?.vehicle?.make} {cancelTarget?.vehicle?.model}</strong> from{" "}
+              <strong>{cancelTarget?.clientName}</strong>?
+            </p>
+            <div className="flex gap-3 justify-end">
+              <Button variant="ghost" onClick={() => setCancelConfirm(null)}>Keep Booking</Button>
+              <Button
+                variant="danger"
+                onClick={() => cancelConfirm && handleCancel(cancelConfirm)}
+                isLoading={actionLoading === cancelConfirm}
+              >
+                Cancel Booking
+              </Button>
+            </div>
+          </div>
+        </Modal>
       </main>
     </div>
   );

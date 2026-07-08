@@ -3,7 +3,7 @@ import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import type { Id } from "../../convex/_generated/dataModel";
 
-const UPDATE_INTERVAL = 30000; // 30 seconds
+const UPDATE_INTERVAL = 10000; // 10 seconds
 
 export function useGeolocation(sessionId: Id<"sessions"> | null) {
   const updateLocation = useMutation(api.sessions.updateLocation);

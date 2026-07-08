@@ -4,6 +4,7 @@ import { useAuth } from "../hooks/useAuth";
 import { Button } from "../components/ui/Button";
 import { Input, Textarea } from "../components/ui/Input";
 import { Card, CardContent } from "../components/ui/Card";
+import { GoogleSignInButton } from "../components/ui/GoogleSignInButton";
 import { Car, User, Briefcase } from "lucide-react";
 
 export const Route = createFileRoute("/register")({
@@ -103,6 +104,22 @@ function RegisterPage() {
 
         <Card>
           <CardContent className="p-6">
+            {/* Google Sign-In */}
+            <GoogleSignInButton
+              role={role}
+              onSuccess={() => navigate({ to: "/dashboard" })}
+              onError={(e) => setError(e)}
+            />
+
+            <div className="relative my-5">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-surface-200" />
+              </div>
+              <div className="relative flex justify-center">
+                <span className="bg-white px-3 text-xs text-surface-400">or register with email</span>
+              </div>
+            </div>
+
             <form onSubmit={handleSubmit} className="space-y-4">
               {error && (
                 <div className="p-3 rounded-xl bg-danger-50 text-danger-600 text-sm font-medium">

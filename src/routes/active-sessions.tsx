@@ -6,6 +6,8 @@ import { Sidebar } from "../components/layout/Sidebar";
 import { Card, CardContent } from "../components/ui/Card";
 import { Badge, Spinner, EmptyState } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
+import { Modal } from "../components/ui/Modal";
+import { useToast } from "../components/ui/Toast";
 import { useState, useEffect, useRef } from "react";
 import { Timer, MapPin, Square } from "lucide-react";
 import { formatDuration, formatCurrency, calculateCharge } from "../lib/utils";
@@ -21,7 +23,9 @@ function ActiveSessionsPage() {
   const sessions = useQuery(api.sessions.getActiveByAgent, user ? { agentId: user._id } : "skip");
   const completeMutation = useMutation(api.sessions.complete);
 
+  const { toast } = useToast();
   const [completing, setCompleting] = useState<string | null>(null);
+  const [endConfirm, setEndConfirm] = useState<string | null>(null);
   const [now, setNow] = useState(Date.now());
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
@@ -81,13 +85,13 @@ function ActiveSessionsPage() {
   if (!user || user.role !== "agent") { navigate({ to: "/login" }); return null; }
 
   const handleComplete = async (sessionId: string) => {
-    if (!confirm("End this session? The final charge will be calculated.")) return;
+    setEndConfirm(null);
     setCompleting(sessionId);
     try {
       const result = await completeMutation({ sessionId: sessionId as never, agentId: user._id });
-      alert(`Session completed! Final charge: KES ${result.totalCharge.toLocaleString()}`);
+      toast(`Session ended! Final charge: KES ${result.totalCharge.toLocaleString()}`, "success");
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Failed to end session");
+      toast(err instanceof Error ? err.message : "Failed to end session", "error");
     } finally {
       setCompleting(null);
     }
@@ -145,7 +149,7 @@ function ActiveSessionsPage() {
                         <Button
                           size="sm"
                           variant="danger"
-                          onClick={() => handleComplete(s._id)}
+                          onClick={() => setEndConfirm(s._id)}
                           isLoading={completing === s._id}
                         >
                           <Square className="w-3.5 h-3.5" /> End
@@ -164,6 +168,29 @@ function ActiveSessionsPage() {
             description="Active hire sessions with live tracking will appear here."
           />
         )}
+
+        {/* End session confirmation modal */}
+        <Modal
+          isOpen={!!endConfirm}
+          onClose={() => setEndConfirm(null)}
+          title="End Session"
+        >
+          <div className="space-y-4">
+            <p className="text-surface-700">
+              End this session now? The final charge will be calculated based on elapsed time and the client will be notified.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <Button variant="ghost" onClick={() => setEndConfirm(null)}>Cancel</Button>
+              <Button
+                variant="danger"
+                onClick={() => endConfirm && handleComplete(endConfirm)}
+                isLoading={completing === endConfirm}
+              >
+                <Square className="w-3.5 h-3.5" /> End Session
+              </Button>
+            </div>
+          </div>
+        </Modal>
       </main>
     </div>
   );

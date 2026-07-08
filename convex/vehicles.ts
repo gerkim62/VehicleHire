@@ -115,3 +115,71 @@ export const getStorageUrl = query({
     return await ctx.storage.getUrl(args.storageId as never);
   },
 });
+
+// Helper to resolve photo storage IDs → public URLs
+async function resolvePhotos(
+  ctx: { storage: { getUrl: (id: never) => Promise<string | null> } },
+  photos: string[]
+): Promise<string[]> {
+  const urls = await Promise.all(
+    photos.map(async (id) => {
+      try {
+        const url = await ctx.storage.getUrl(id as never);
+        return url ?? id; // fall back to raw ID if not found
+      } catch {
+        return id;
+      }
+    })
+  );
+  return urls.filter((u) => !!u) as string[];
+}
+
+// Get all available vehicles with resolved photo URLs (for clients)
+export const getAvailableWithUrls = query({
+  handler: async (ctx) => {
+    const vehicles = await ctx.db
+      .query("vehicles")
+      .withIndex("by_availability", (q) =>
+        q.eq("isAvailable", true).eq("isActive", true)
+      )
+      .collect();
+
+    return await Promise.all(
+      vehicles.map(async (v) => ({
+        ...v,
+        photos: await resolvePhotos(ctx, v.photos),
+      }))
+    );
+  },
+});
+
+// Get agent's vehicles with resolved photo URLs
+export const getByAgentWithUrls = query({
+  args: { agentId: v.id("users") },
+  handler: async (ctx, args) => {
+    const vehicles = await ctx.db
+      .query("vehicles")
+      .withIndex("by_agent", (q) => q.eq("agentId", args.agentId))
+      .collect();
+
+    return await Promise.all(
+      vehicles.map(async (v) => ({
+        ...v,
+        photos: await resolvePhotos(ctx, v.photos),
+      }))
+    );
+  },
+});
+
+// Get single vehicle by ID with resolved photo URLs
+export const getByIdWithUrl = query({
+  args: { vehicleId: v.id("vehicles") },
+  handler: async (ctx, args) => {
+    const vehicle = await ctx.db.get(args.vehicleId);
+    if (!vehicle) return null;
+    return {
+      ...vehicle,
+      photos: await resolvePhotos(ctx, vehicle.photos),
+    };
+  },
+});

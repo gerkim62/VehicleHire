@@ -17,7 +17,7 @@ export const Route = createFileRoute("/vehicles")({
 function VehiclesPage() {
   const { user, isLoading } = useAuth();
   const navigate = useNavigate();
-  const vehicles = useQuery(api.vehicles.getAvailable);
+  const vehicles = useQuery(api.vehicles.getAvailableWithUrls);
   const [search, setSearch] = useState("");
 
   if (isLoading) return <div className="flex items-center justify-center min-h-[60vh]"><Spinner className="w-8 h-8" /></div>;

@@ -16,7 +16,7 @@ export const Route = createFileRoute("/my-vehicles")({
 function MyVehiclesPage() {
   const { user, isLoading } = useAuth();
   const navigate = useNavigate();
-  const vehicles = useQuery(api.vehicles.getByAgent, user ? { agentId: user._id } : "skip");
+  const vehicles = useQuery(api.vehicles.getByAgentWithUrls, user ? { agentId: user._id } : "skip");
   const updateVehicle = useMutation(api.vehicles.update);
 
   if (isLoading) return <div className="flex items-center justify-center min-h-[60vh]"><Spinner className="w-8 h-8" /></div>;

@@ -27,7 +27,7 @@ function VehicleDetailPage() {
   const { user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
 
-  const vehicle = useQuery(api.vehicles.getById, {
+  const vehicle = useQuery(api.vehicles.getByIdWithUrl, {
     vehicleId: vehicleId as Id<"vehicles">,
   });
   const reviews = useQuery(api.reviews.getByVehicle, {

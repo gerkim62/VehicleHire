@@ -5,6 +5,7 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import { routeTree } from "./routeTree.gen";
 import { AuthProvider } from "./hooks/useAuth";
+import { ToastProvider } from "./components/ui/Toast";
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
 
@@ -20,7 +21,9 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ConvexProvider client={convex}>
       <AuthProvider>
-        <RouterProvider router={router} />
+        <ToastProvider>
+          <RouterProvider router={router} />
+        </ToastProvider>
       </AuthProvider>
     </ConvexProvider>
   </StrictMode>

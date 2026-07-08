@@ -15,6 +15,13 @@ interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
+  loginWithGoogle: (
+    googleId: string,
+    email: string,
+    name: string,
+    avatarUrl: string | undefined,
+    role: "client" | "agent"
+  ) => Promise<void>;
   register: (data: RegisterData) => Promise<void>;
   logout: () => void;
 }
@@ -42,6 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loginMutation = useMutation(api.users.loginUser);
   const registerMutation = useMutation(api.users.register);
+  const googleAuthMutation = useMutation(api.users.googleAuth);
   const userResult = useQuery(api.users.getUser, userId ? { userId } : "skip");
 
   useEffect(() => {
@@ -51,6 +59,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, password: string) => {
     const hash = await hashPassword(password);
     const id = await loginMutation({ email, passwordHash: hash });
+    localStorage.setItem(STORAGE_KEY, id);
+    setUserId(id);
+  };
+
+  const loginWithGoogle = async (
+    googleId: string,
+    email: string,
+    name: string,
+    avatarUrl: string | undefined,
+    role: "client" | "agent"
+  ) => {
+    const id = await googleAuthMutation({
+      googleId,
+      email,
+      name,
+      avatarUrl,
+      role,
+    });
     localStorage.setItem(STORAGE_KEY, id);
     setUserId(id);
   };
@@ -82,6 +108,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user: (userResult as User) ?? null,
         isLoading,
         login,
+        loginWithGoogle,
         register,
         logout,
       }}

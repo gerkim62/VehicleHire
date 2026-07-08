@@ -8,9 +8,12 @@ import { Badge, Spinner, StarDisplay, EmptyState } from "../components/ui/Badge"
 import { Button } from "../components/ui/Button";
 import { Modal } from "../components/ui/Modal";
 import { Textarea } from "../components/ui/Input";
+import { usePaystack } from "../hooks/usePaystack";
+import { useToast } from "../components/ui/Toast";
 import { useState } from "react";
-import { History as HistoryIcon, Star, CreditCard } from "lucide-react";
+import { History as HistoryIcon, Star, CreditCard, CheckCircle } from "lucide-react";
 import { formatCurrency, formatDuration, formatDate, generateReference } from "../lib/utils";
+import type { Id } from "../../convex/_generated/dataModel";
 
 export const Route = createFileRoute("/history")({
   component: HistoryPage,
@@ -19,17 +22,19 @@ export const Route = createFileRoute("/history")({
 function HistoryPage() {
   const { user, isLoading } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const { pay } = usePaystack();
+
   const sessions = useQuery(api.sessions.getByClient, user ? { clientId: user._id } : "skip");
   const createPayment = useMutation(api.payments.create);
   const markPaymentSuccess = useMutation(api.payments.markSuccess);
+  const markPaymentFailed = useMutation(api.payments.markFailed);
   const submitReview = useMutation(api.reviews.submit);
 
   const [reviewModal, setReviewModal] = useState<string | null>(null);
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
-
-  // Payment state
   const [payingSession, setPayingSession] = useState<string | null>(null);
 
   if (isLoading) return <div className="flex items-center justify-center min-h-[60vh]"><Spinner className="w-8 h-8" /></div>;
@@ -40,22 +45,53 @@ function HistoryPage() {
   const handlePay = async (session: (typeof completedSessions)[0]) => {
     if (!user || !session.totalCharge) return;
     setPayingSession(session._id);
+
     try {
       const ref = generateReference();
+
+      // Create the payment record first (pending)
       await createPayment({
-        sessionId: session._id,
+        sessionId: session._id as Id<"sessions">,
         clientId: user._id,
         agentId: session.agentId,
         amount: session.totalCharge,
         currency: "KES",
         paystackReference: ref,
       });
-      // Simulate Paystack payment success for demo
-      await markPaymentSuccess({ paystackReference: ref });
-      alert("Payment successful! KES " + session.totalCharge.toLocaleString());
+
+      // Open Paystack popup
+      pay({
+        email: user.email,
+        // Paystack KES amounts are in cents (×100)
+        amount: session.totalCharge * 100,
+        currency: "KES",
+        reference: ref,
+        onSuccess: async (response) => {
+          try {
+            await markPaymentSuccess({
+              paystackReference: response.reference,
+              paystackTransactionId: response.trans,
+            });
+            toast(`Payment of ${formatCurrency(session.totalCharge!)} confirmed! ✓`, "success");
+          } catch {
+            toast("Payment was received but confirmation failed. Contact support.", "error");
+          } finally {
+            setPayingSession(null);
+          }
+        },
+        onClose: async () => {
+          // Payment was cancelled — mark as failed
+          try {
+            await markPaymentFailed({ paystackReference: ref });
+          } catch {
+            // Ignore cleanup errors
+          }
+          toast("Payment was cancelled.", "warning");
+          setPayingSession(null);
+        },
+      });
     } catch (err) {
-      alert("Payment failed: " + (err instanceof Error ? err.message : "Unknown error"));
-    } finally {
+      toast("Payment failed: " + (err instanceof Error ? err.message : "Unknown error"), "error");
       setPayingSession(null);
     }
   };
@@ -73,8 +109,9 @@ function HistoryPage() {
       setReviewModal(null);
       setRating(5);
       setComment("");
+      toast("Review submitted successfully!", "success");
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Failed to submit review");
+      toast(err instanceof Error ? err.message : "Failed to submit review", "error");
     } finally {
       setSubmitting(false);
     }
@@ -92,44 +129,14 @@ function HistoryPage() {
         ) : completedSessions.length > 0 ? (
           <div className="space-y-4 animate-fade-in">
             {completedSessions.map((s: any) => (
-              <Card key={s._id}>
-                <CardContent>
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div>
-                      <p className="font-medium text-surface-900">
-                        {s.vehicle?.make} {s.vehicle?.model}
-                      </p>
-                      <p className="text-xs text-surface-400">
-                        {formatDate(s.startedAt)} · Duration: {s.durationMs ? formatDuration(s.durationMs) : "—"}
-                      </p>
-                      <div className="flex items-center gap-3 mt-2">
-                        <Badge variant="default" size="md">{formatCurrency(s.totalCharge || 0)}</Badge>
-                        <Badge variant="success" dot>Completed</Badge>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => handlePay(s)}
-                        isLoading={payingSession === s._id}
-                      >
-                        <CreditCard className="w-4 h-4" /> Pay
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => { setReviewModal(s._id); setRating(5); setComment(""); }}
-                      >
-                        <Star className="w-4 h-4" /> Review
-                      </Button>
-                      <Link to="/session/$sessionId" params={{ sessionId: s._id }}>
-                        <Button size="sm" variant="ghost">View</Button>
-                      </Link>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              <SessionCard
+                key={s._id}
+                session={s}
+                userId={user._id}
+                onPay={handlePay}
+                onReview={(id) => { setReviewModal(id); setRating(5); setComment(""); }}
+                payingSession={payingSession}
+              />
             ))}
           </div>
         ) : (
@@ -182,5 +189,93 @@ function HistoryPage() {
         </Modal>
       </main>
     </div>
+  );
+}
+
+// ─── SessionCard ──────────────────────────────────────────────────────────────
+
+function SessionCard({
+  session,
+  userId,
+  onPay,
+  onReview,
+  payingSession,
+}: {
+  session: any;
+  userId: Id<"users">;
+  onPay: (s: any) => void;
+  onReview: (id: string) => void;
+  payingSession: string | null;
+}) {
+  // Check payment and review status reactively
+  const payment = useQuery(api.payments.getBySession, { sessionId: session._id });
+  const canReview = useQuery(api.reviews.canReview, {
+    sessionId: session._id,
+    clientId: userId,
+  });
+
+  const isPaid = payment?.status === "success";
+  const paymentPending = payment?.status === "pending";
+
+  return (
+    <Card>
+      <CardContent>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <p className="font-medium text-surface-900">
+              {session.vehicle?.make} {session.vehicle?.model}
+            </p>
+            <p className="text-xs text-surface-400">
+              {formatDate(session.startedAt)} · Duration: {session.durationMs ? formatDuration(session.durationMs) : "—"}
+            </p>
+            <div className="flex items-center gap-3 mt-2">
+              <Badge variant="default" size="md">{formatCurrency(session.totalCharge || 0)}</Badge>
+              <Badge variant="success" dot>Completed</Badge>
+              {isPaid && (
+                <Badge variant="success">
+                  <CheckCircle className="w-3 h-3" /> Paid
+                </Badge>
+              )}
+            </div>
+          </div>
+          <div className="flex items-center gap-2 flex-wrap">
+            {/* Payment button */}
+            {!isPaid && !paymentPending && session.totalCharge && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => onPay(session)}
+                isLoading={payingSession === session._id}
+              >
+                <CreditCard className="w-4 h-4" /> Pay Now
+              </Button>
+            )}
+            {paymentPending && payingSession !== session._id && (
+              <Badge variant="warning" dot>Payment pending</Badge>
+            )}
+
+            {/* Review button */}
+            {isPaid && canReview && (
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => onReview(session._id)}
+              >
+                <Star className="w-4 h-4" /> Review
+              </Button>
+            )}
+            {isPaid && canReview === false && (
+              <Badge variant="info" size="sm">
+                <Star className="w-3 h-3" /> Reviewed
+              </Badge>
+            )}
+
+            <Link to="/session/$sessionId" params={{ sessionId: session._id }}>
+              <Button size="sm" variant="ghost">View</Button>
+            </Link>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

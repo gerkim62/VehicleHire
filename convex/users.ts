@@ -58,6 +58,25 @@ export const register = mutation({
       createdAt: Date.now(),
     });
 
+    // Notify all admins when a new agent registers (needs review)
+    if (args.role === "agent") {
+      const admins = await ctx.db
+        .query("users")
+        .withIndex("by_role", (q) => q.eq("role", "admin"))
+        .collect();
+      for (const admin of admins) {
+        await ctx.db.insert("notifications", {
+          userId: admin._id,
+          type: "booking_created", // reusing closest type for new agent alert
+          title: "New Agent Registration",
+          message: `${args.name} has registered as a hire agent and is awaiting approval.`,
+          isRead: false,
+          relatedId: userId,
+          createdAt: Date.now(),
+        });
+      }
+    }
+
     return userId;
   },
 });
@@ -191,5 +210,18 @@ export const updateAgentStatus = mutation({
       throw new Error("User not found or not an agent");
     }
     await ctx.db.patch(args.userId, { agentStatus: args.status });
+
+    // Notify the agent of the decision
+    const isApproved = args.status === "approved";
+    await ctx.db.insert("notifications", {
+      userId: args.userId,
+      type: isApproved ? "agent_approved" : "agent_rejected",
+      title: isApproved ? "Application Approved 🎉" : "Application Rejected",
+      message: isApproved
+        ? "Your hire agent account has been approved! You can now list vehicles and start receiving bookings."
+        : "Your agent registration was reviewed and could not be approved at this time. Please contact the administrator for more details.",
+      isRead: false,
+      createdAt: Date.now(),
+    });
   },
 });
