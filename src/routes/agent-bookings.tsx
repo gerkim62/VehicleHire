@@ -108,21 +108,35 @@ function AgentBookingsPage() {
                     {b.notes && <p className="text-xs text-surface-400 mt-1 italic">Note: {b.notes}</p>}
                   </div>
                   <div className="flex items-center gap-2">
-                    <Badge variant={b.status === "confirmed" ? "success" : "warning"} dot>{b.status}</Badge>
-                    <Button
-                      size="sm"
-                      onClick={() => handleStart(b._id)}
-                      isLoading={actionLoading === b._id}
-                    >
-                      <Play className="w-3.5 h-3.5" /> Start Session
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => setCancelConfirm(b._id)}
-                    >
-                      <XIcon className="w-3.5 h-3.5" />
-                    </Button>
+                    <Badge variant={b.status === "confirmed" ? "success" : b.status === "cancelled" ? "danger" : "warning"} dot>
+                      {b.status}
+                    </Badge>
+                    {b.sessionStatus === "in_progress" && (
+                      <Badge variant="info" dot>Active Session</Badge>
+                    )}
+                    {b.sessionStatus === "completed" && (
+                      <Badge variant="default" dot>Session Ended</Badge>
+                    )}
+
+                    {b.status !== "cancelled" && !b.sessionStatus && (
+                      <Button
+                        size="sm"
+                        onClick={() => handleStart(b._id)}
+                        isLoading={actionLoading === b._id}
+                      >
+                        <Play className="w-3.5 h-3.5" /> Start Session
+                      </Button>
+                    )}
+
+                    {b.status === "pending" && !b.sessionStatus && (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => setCancelConfirm(b._id)}
+                      >
+                        <XIcon className="w-3.5 h-3.5" />
+                      </Button>
+                    )}
                   </div>
                 </CardContent>
               </Card>

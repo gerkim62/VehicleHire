@@ -138,11 +138,18 @@ export const getByAgent = query({
       bookings.map(async (booking) => {
         const vehicle = await ctx.db.get(booking.vehicleId);
         const client = await ctx.db.get(booking.clientId);
+        
+        const session = await ctx.db
+          .query("sessions")
+          .withIndex("by_booking", (q) => q.eq("bookingId", booking._id))
+          .first();
+
         return {
           ...booking,
           vehicle,
           clientName: client?.name || "Unknown",
           clientEmail: client?.email,
+          sessionStatus: session?.status || null,
         };
       })
     );
