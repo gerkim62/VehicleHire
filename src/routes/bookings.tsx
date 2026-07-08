@@ -61,7 +61,7 @@ export function BookingsPage() {
                       {b.status}
                     </Badge>
                     {b.status === "confirmed" && b.sessionId && (
-                      <Link to="/session/$sessionId" params={{ sessionId: b.sessionId } as unknown as Record<string, string>} className="text-xs text-primary-600 hover:underline">
+                      <Link to="/session/$sessionId" params={{ sessionId: b.sessionId }} className="text-xs text-primary-600 hover:underline">
                         View
                       </Link>
                     )}
