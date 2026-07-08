@@ -1,4 +1,4 @@
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
 // Create a new vehicle listing
@@ -17,7 +17,7 @@ export const create = mutation({
   handler: async (ctx, args) => {
     const agent = await ctx.db.get(args.agentId);
     if (!agent || agent.role !== "agent" || agent.agentStatus !== "approved") {
-      throw new Error("Only approved agents can list vehicles");
+      throw new ConvexError("Only approved agents can list vehicles");
     }
 
     return await ctx.db.insert("vehicles", {

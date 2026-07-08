@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
+import { getErrorMessage } from "../../lib/utils";
 
 declare global {
   interface Window {
@@ -69,7 +70,7 @@ export function GoogleSignInButton({ role, onSuccess, onError }: Props) {
       );
       onSuccess?.();
     } catch (err) {
-      onError?.(err instanceof Error ? err.message : "Google sign-in failed");
+      onError?.(getErrorMessage(err));
     } finally {
       setLoading(false);
     }

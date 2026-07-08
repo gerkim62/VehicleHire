@@ -16,8 +16,9 @@ import {
   Star,
   ArrowLeft,
 } from "lucide-react";
-import { formatCurrency, formatDate } from "../lib/utils";
+import { formatCurrency, formatDate, getErrorMessage } from "../lib/utils";
 import type { Review } from "../lib/types";
+import { useToast } from "../components/ui/Toast";
 
 type EnrichedReview = Review & { clientName: string; clientAvatar?: string };
 
@@ -29,6 +30,7 @@ function VehicleDetailPage() {
   const { vehicleId } = Route.useParams();
   const { user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const { error: toastError } = useToast();
 
   const vehicle = useQuery(api.vehicles.getByIdWithUrl, {
     vehicleId: vehicleId as Id<"vehicles">,
@@ -59,7 +61,9 @@ function VehicleDetailPage() {
       });
       navigate({ to: "/bookings" });
     } catch (err: unknown) {
-      setBookingError(err instanceof Error ? err.message : "Booking failed");
+      const msg = getErrorMessage(err);
+      setBookingError(msg);
+      toastError(msg);
     } finally {
       setBooking(false);
     }

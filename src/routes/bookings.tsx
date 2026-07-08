@@ -61,7 +61,7 @@ function BookingsPage() {
                       {b.status}
                     </Badge>
                     {b.status === "confirmed" && (
-                      <Link to="/vehicle/$vehicleId" params={{ vehicleId: b.vehicleId }} className="text-xs text-primary-600 hover:underline">
+                      <Link to="/vehicle/$vehicleId" params={{ vehicleId: b.vehicleId } as unknown as Record<string, string>} className="text-xs text-primary-600 hover:underline">
                         View
                       </Link>
                     )}

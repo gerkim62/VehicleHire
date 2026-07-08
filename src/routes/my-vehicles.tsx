@@ -23,6 +23,24 @@ function MyVehiclesPage() {
   if (isLoading) return <div className="flex items-center justify-center min-h-[60vh]"><Spinner className="w-8 h-8" /></div>;
   if (!user || user.role !== "agent") { navigate({ to: "/login" }); return null; }
 
+  if (user.agentStatus !== "approved") {
+    return (
+      <div className="flex">
+        <Sidebar />
+        <main className="flex-1 p-6 lg:p-8 max-w-2xl flex flex-col items-center justify-center min-h-[60vh] text-center">
+          <div className="w-16 h-16 rounded-full bg-warning-50 flex items-center justify-center mb-4 text-warning-600">
+            <span className="text-2xl font-bold">!</span>
+          </div>
+          <h1 className="text-2xl font-bold text-surface-900 mb-2">Approval Pending</h1>
+          <p className="text-surface-500 max-w-md mb-6">
+            Your agent registration is currently pending review. You can manage your fleet listings once approved.
+          </p>
+          <Button onClick={() => navigate({ to: "/dashboard" })}>Back to Dashboard</Button>
+        </main>
+      </div>
+    );
+  }
+
   const toggleActive = async (vehicleId: string, isActive: boolean) => {
     await updateVehicle({
       vehicleId: vehicleId as never,

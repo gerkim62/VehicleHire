@@ -8,8 +8,9 @@ import { Badge, Spinner, EmptyState } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
 import { useState } from "react";
 import { Shield, Check, X as XIcon } from "lucide-react";
-import { formatDate } from "../lib/utils";
+import { formatDate, getErrorMessage } from "../lib/utils";
 import type { User } from "../lib/types";
+import { useToast } from "../components/ui/Toast";
 
 export const Route = createFileRoute("/manage-agents")({
   component: ManageAgentsPage,
@@ -20,6 +21,7 @@ function ManageAgentsPage() {
   const navigate = useNavigate();
   const pendingAgents = useQuery(api.users.getPendingAgents);
   const updateStatus = useMutation(api.users.updateAgentStatus);
+  const { error: toastError } = useToast();
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
   if (isLoading) return <div className="flex items-center justify-center min-h-[60vh]"><Spinner className="w-8 h-8" /></div>;
@@ -30,7 +32,7 @@ function ManageAgentsPage() {
     try {
       await updateStatus({ userId: userId as never, status });
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Action failed");
+      toastError(getErrorMessage(err));
     } finally {
       setActionLoading(null);
     }
