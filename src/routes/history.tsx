@@ -12,7 +12,7 @@ import { usePaystack } from "../hooks/usePaystack";
 import { useToast } from "../components/ui/Toast";
 import { useState } from "react";
 import { History as HistoryIcon, Star, CreditCard, CheckCircle } from "lucide-react";
-import { formatCurrency, formatDuration, formatDate, generateReference } from "../lib/utils";
+import { formatCurrency, formatDuration, formatDate, generateReference, getErrorMessage } from "../lib/utils";
 import type { Id } from "../../convex/_generated/dataModel";
 import type { Session, Vehicle, User as DBUser } from "../lib/types";
 
@@ -94,7 +94,7 @@ function HistoryPage() {
         },
       });
     } catch (err) {
-      toast("Payment failed: " + (err instanceof Error ? err.message : "Unknown error"), "error");
+      toast("Payment failed: " + getErrorMessage(err), "error");
       setPayingSession(null);
     }
   };
@@ -114,7 +114,7 @@ function HistoryPage() {
       setComment("");
       toast("Review submitted successfully!", "success");
     } catch (err) {
-      toast(err instanceof Error ? err.message : "Failed to submit review", "error");
+      toast(getErrorMessage(err), "error");
     } finally {
       setSubmitting(false);
     }

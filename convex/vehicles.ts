@@ -51,7 +51,7 @@ export const update = mutation({
   handler: async (ctx, args) => {
     const vehicle = await ctx.db.get(args.vehicleId);
     if (!vehicle || vehicle.agentId !== args.agentId) {
-      throw new Error("Vehicle not found or unauthorized");
+      throw new ConvexError("Vehicle not found or unauthorized");
     }
 
     const { vehicleId, agentId, ...updates } = args;

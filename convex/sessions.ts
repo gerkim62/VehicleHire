@@ -1,4 +1,4 @@
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
 // Start a session (agent action — transitions booking to active session)
@@ -9,14 +9,14 @@ export const start = mutation({
   },
   handler: async (ctx, args) => {
     const booking = await ctx.db.get(args.bookingId);
-    if (!booking) throw new Error("Booking not found");
-    if (booking.agentId !== args.agentId) throw new Error("Unauthorized");
+    if (!booking) throw new ConvexError("Booking not found");
+    if (booking.agentId !== args.agentId) throw new ConvexError("Unauthorized");
     if (booking.status !== "pending" && booking.status !== "confirmed") {
-      throw new Error("Booking must be pending or confirmed to start session");
+      throw new ConvexError("Booking must be pending or confirmed to start session");
     }
 
     const vehicle = await ctx.db.get(booking.vehicleId);
-    if (!vehicle) throw new Error("Vehicle not found");
+    if (!vehicle) throw new ConvexError("Vehicle not found");
 
     // Update booking status
     await ctx.db.patch(args.bookingId, { status: "confirmed" });
@@ -57,10 +57,10 @@ export const complete = mutation({
   },
   handler: async (ctx, args) => {
     const session = await ctx.db.get(args.sessionId);
-    if (!session) throw new Error("Session not found");
-    if (session.agentId !== args.agentId) throw new Error("Unauthorized");
+    if (!session) throw new ConvexError("Session not found");
+    if (session.agentId !== args.agentId) throw new ConvexError("Unauthorized");
     if (session.status !== "in_progress") {
-      throw new Error("Session is not in progress");
+      throw new ConvexError("Session is not in progress");
     }
 
     const now = Date.now();

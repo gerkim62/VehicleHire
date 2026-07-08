@@ -11,7 +11,7 @@ import { useTimer } from "../hooks/useTimer";
 import { useGeolocation } from "../hooks/useGeolocation";
 import { usePaystack } from "../hooks/usePaystack";
 import { useToast } from "../components/ui/Toast";
-import { formatDuration, formatCurrency, calculateCharge, generateReference } from "../lib/utils";
+import { formatDuration, formatCurrency, calculateCharge, generateReference, getErrorMessage } from "../lib/utils";
 import { Timer, DollarSign, Car, MapPin, CreditCard, CheckCircle } from "lucide-react";
 import { useEffect, useRef } from "react";
 import type L from "leaflet";
@@ -124,7 +124,7 @@ function SessionPage() {
         },
       });
     } catch (err) {
-      toast("Failed to initiate payment: " + (err instanceof Error ? err.message : "Unknown error"), "error");
+      toast("Failed to initiate payment: " + getErrorMessage(err), "error");
     }
   };
 

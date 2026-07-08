@@ -1,4 +1,4 @@
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
 // Submit a review
@@ -11,14 +11,14 @@ export const submit = mutation({
   },
   handler: async (ctx, args) => {
     if (args.rating < 1 || args.rating > 5) {
-      throw new Error("Rating must be between 1 and 5");
+      throw new ConvexError("Rating must be between 1 and 5");
     }
 
     const session = await ctx.db.get(args.sessionId);
-    if (!session) throw new Error("Session not found");
-    if (session.clientId !== args.clientId) throw new Error("Unauthorized");
+    if (!session) throw new ConvexError("Session not found");
+    if (session.clientId !== args.clientId) throw new ConvexError("Unauthorized");
     if (session.status !== "completed") {
-      throw new Error("Can only review completed sessions");
+      throw new ConvexError("Can only review completed sessions");
     }
 
     // Check if already reviewed
@@ -26,7 +26,7 @@ export const submit = mutation({
       .query("reviews")
       .withIndex("by_session", (q) => q.eq("sessionId", args.sessionId))
       .first();
-    if (existing) throw new Error("Session already reviewed");
+    if (existing) throw new ConvexError("Session already reviewed");
 
     // Create review
     const reviewId = await ctx.db.insert("reviews", {

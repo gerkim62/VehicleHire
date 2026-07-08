@@ -1,4 +1,4 @@
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
 // Create a payment record
@@ -34,7 +34,7 @@ export const markSuccess = mutation({
       )
       .first();
 
-    if (!payment) throw new Error("Payment not found");
+    if (!payment) throw new ConvexError("Payment not found");
 
     await ctx.db.patch(payment._id, {
       status: "success",
@@ -70,7 +70,7 @@ export const markFailed = mutation({
       )
       .first();
 
-    if (!payment) throw new Error("Payment not found");
+    if (!payment) throw new ConvexError("Payment not found");
 
     await ctx.db.patch(payment._id, { status: "failed" });
   },

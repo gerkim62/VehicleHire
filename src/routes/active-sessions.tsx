@@ -10,7 +10,7 @@ import { Modal } from "../components/ui/Modal";
 import { useToast } from "../components/ui/Toast";
 import { useState, useEffect, useRef } from "react";
 import { Timer, MapPin, Square } from "lucide-react";
-import { formatDuration, formatCurrency, calculateCharge } from "../lib/utils";
+import { formatDuration, formatCurrency, calculateCharge, getErrorMessage } from "../lib/utils";
 import type L from "leaflet";
 
 export const Route = createFileRoute("/active-sessions")({
@@ -109,7 +109,7 @@ function ActiveSessionsPage() {
       const result = await completeMutation({ sessionId: sessionId as never, agentId: user._id });
       toast(`Session ended! Final charge: KES ${result.totalCharge.toLocaleString()}`, "success");
     } catch (err) {
-      toast(err instanceof Error ? err.message : "Failed to end session", "error");
+      toast(getErrorMessage(err), "error");
     } finally {
       setCompleting(null);
     }

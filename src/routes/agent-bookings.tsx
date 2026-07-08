@@ -10,7 +10,7 @@ import { Modal } from "../components/ui/Modal";
 import { useToast } from "../components/ui/Toast";
 import { useState } from "react";
 import { CalendarCheck, Play, X as XIcon } from "lucide-react";
-import { formatRelativeTime, formatCurrency } from "../lib/utils";
+import { formatRelativeTime, formatCurrency, getErrorMessage } from "../lib/utils";
 
 export const Route = createFileRoute("/agent-bookings")({
   component: AgentBookingsPage,
@@ -55,7 +55,7 @@ function AgentBookingsPage() {
       toast("Session started!", "success");
       navigate({ to: `/session/${sessionId}` });
     } catch (err) {
-      toast(err instanceof Error ? err.message : "Failed to start session", "error");
+      toast(getErrorMessage(err), "error");
     } finally {
       setActionLoading(null);
     }
@@ -68,7 +68,7 @@ function AgentBookingsPage() {
       await cancelBooking({ bookingId: bookingId as never, userId: user._id });
       toast("Booking cancelled.", "info");
     } catch (err) {
-      toast(err instanceof Error ? err.message : "Failed to cancel", "error");
+      toast(getErrorMessage(err), "error");
     } finally {
       setActionLoading(null);
     }

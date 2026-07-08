@@ -207,7 +207,7 @@ export const updateAgentStatus = mutation({
   handler: async (ctx, args) => {
     const user = await ctx.db.get(args.userId);
     if (!user || user.role !== "agent") {
-      throw new Error("User not found or not an agent");
+      throw new ConvexError("User not found or not an agent");
     }
     await ctx.db.patch(args.userId, { agentStatus: args.status });
 

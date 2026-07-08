@@ -1,4 +1,4 @@
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
 // Create a booking
@@ -12,7 +12,7 @@ export const create = mutation({
   handler: async (ctx, args) => {
     const vehicle = await ctx.db.get(args.vehicleId);
     if (!vehicle || !vehicle.isAvailable || !vehicle.isActive) {
-      throw new Error("Vehicle is not available");
+      throw new ConvexError("Vehicle is not available");
     }
 
     // Mark vehicle as unavailable
@@ -52,10 +52,10 @@ export const confirm = mutation({
   handler: async (ctx, args) => {
     const booking = await ctx.db.get(args.bookingId);
     if (!booking || booking.agentId !== args.agentId) {
-      throw new Error("Booking not found or unauthorized");
+      throw new ConvexError("Booking not found or unauthorized");
     }
     if (booking.status !== "pending") {
-      throw new Error("Booking is not in pending status");
+      throw new ConvexError("Booking is not in pending status");
     }
 
     await ctx.db.patch(args.bookingId, { status: "confirmed" });
@@ -81,15 +81,15 @@ export const cancel = mutation({
   },
   handler: async (ctx, args) => {
     const booking = await ctx.db.get(args.bookingId);
-    if (!booking) throw new Error("Booking not found");
+    if (!booking) throw new ConvexError("Booking not found");
     if (
       booking.clientId !== args.userId &&
       booking.agentId !== args.userId
     ) {
-      throw new Error("Unauthorized");
+      throw new ConvexError("Unauthorized");
     }
     if (booking.status !== "pending") {
-      throw new Error("Can only cancel pending bookings");
+      throw new ConvexError("Can only cancel pending bookings");
     }
 
     await ctx.db.patch(args.bookingId, { status: "cancelled" });
