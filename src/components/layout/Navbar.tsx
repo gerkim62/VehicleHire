@@ -14,6 +14,8 @@ import {
 import { useState, useRef, useEffect } from "react";
 import { Badge } from "../ui/Badge";
 import { formatRelativeTime } from "../../lib/utils";
+import type { Notification } from "../../lib/types";
+import type { Id } from "../../../convex/_generated/dataModel";
 
 export function Navbar() {
   const { user, logout } = useAuth();
@@ -29,7 +31,7 @@ export function Navbar() {
   const markRead = useMutation(api.notifications.markRead);
   const markAllRead = useMutation(api.notifications.markAllRead);
 
-  const unread = notifications?.filter((n: any) => !n.isRead) || [];
+  const unread = notifications?.filter((n: Notification) => !n.isRead) || [];
   const unreadCount = unread.length;
 
   // Close on click outside
@@ -54,7 +56,7 @@ export function Navbar() {
   };
 
   const handleNotifClick = async (notifId: string) => {
-    await markRead({ notificationId: notifId as any });
+    await markRead({ notificationId: notifId as Id<"notifications"> });
   };
 
   const notifTypeIcon: Record<string, string> = {
@@ -138,7 +140,7 @@ export function Navbar() {
                             No notifications yet
                           </div>
                         ) : (
-                          notifications.slice(0, 15).map((n: any) => (
+                          notifications.slice(0, 15).map((n: Notification) => (
                             <button
                               key={n._id}
                               onClick={() => handleNotifClick(n._id)}

@@ -67,7 +67,7 @@ export const complete = mutation({
     const durationMs = now - session.startedAt;
 
     // Calculate charge
-    let totalCharge = 0;
+    let totalCharge: number;
     if (session.rateUnit === "hour") {
       const hours = durationMs / (1000 * 60 * 60);
       totalCharge = Math.ceil(hours * session.rateAmount);

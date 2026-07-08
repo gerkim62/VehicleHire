@@ -1,16 +1,7 @@
+"use node";
+
 import { action } from "./_generated/server";
 import { v } from "convex/values";
-
-// ─── Email sending via Nodemailer ─────────────────────────────────────────────
-// This is a Convex Node.js action (runs on Node, not edge).
-// Requires the following environment variables set in the Convex dashboard
-// (Settings → Environment Variables):
-//   SMTP_HOST, SMTP_PORT, SMTP_SECURE, SMTP_USER, SMTP_PASS, EMAIL_FROM
-//
-// See SETUP.md §2d for full configuration instructions.
-// ─────────────────────────────────────────────────────────────────────────────
-
-"use node";
 
 type EmailPayload = {
   to: string;

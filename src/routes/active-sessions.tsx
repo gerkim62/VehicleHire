@@ -26,7 +26,7 @@ function ActiveSessionsPage() {
   const { toast } = useToast();
   const [completing, setCompleting] = useState<string | null>(null);
   const [endConfirm, setEndConfirm] = useState<string | null>(null);
-  const [now, setNow] = useState(Date.now());
+  const [now, setNow] = useState(() => Date.now());
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<L.Marker[]>([]);

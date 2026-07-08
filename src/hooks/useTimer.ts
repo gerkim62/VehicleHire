@@ -1,20 +1,25 @@
 import { useState, useEffect, useRef } from "react";
 
 export function useTimer(startedAt: number | null) {
+  const [prevStartedAt, setPrevStartedAt] = useState(startedAt);
   const [elapsed, setElapsed] = useState(0);
+
+  if (startedAt !== prevStartedAt) {
+    setPrevStartedAt(startedAt);
+    setElapsed(0);
+  }
+
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
-    if (!startedAt) {
-      setElapsed(0);
-      return;
-    }
+    if (!startedAt) return;
 
     const update = () => {
       setElapsed(Date.now() - startedAt);
     };
 
-    update(); // Set initial value
+    update(); // Sync immediately on effect trigger
+
     intervalRef.current = setInterval(update, 1000);
 
     return () => {

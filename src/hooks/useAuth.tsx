@@ -2,7 +2,6 @@ import {
   createContext,
   useContext,
   useState,
-  useEffect,
   type ReactNode,
 } from "react";
 import { useMutation, useQuery } from "convex/react";
@@ -45,16 +44,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const s = localStorage.getItem(STORAGE_KEY);
     return s ? (s as Id<"users">) : null;
   });
-  const [isLoading, setIsLoading] = useState(true);
-
   const loginMutation = useMutation(api.users.loginUser);
   const registerMutation = useMutation(api.users.register);
   const googleAuthMutation = useMutation(api.users.googleAuth);
   const userResult = useQuery(api.users.getUser, userId ? { userId } : "skip");
 
-  useEffect(() => {
-    if (!userId || userResult !== undefined) setIsLoading(false);
-  }, [userId, userResult]);
+  const isLoading = userId !== null && userResult === undefined;
 
   const login = async (email: string, password: string) => {
     const hash = await hashPassword(password);
