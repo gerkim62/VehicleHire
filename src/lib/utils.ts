@@ -80,3 +80,32 @@ export async function verifyPassword(
   const passwordHash = await hashPassword(password);
   return passwordHash === hash;
 }
+
+/** Extracts a user-friendly error message from any error, including wrapped Convex server errors */
+export function getErrorMessage(err: unknown): string {
+  if (typeof err === "object" && err !== null) {
+    const error = err as Record<string, unknown>;
+    
+    if (error.data !== undefined && error.data !== null) {
+      return String(error.data);
+    }
+    
+    const message = String(error.message || "");
+    const uncaughtMatch = message.match(/Uncaught Error: (.*?)(\n| at )/);
+    if (uncaughtMatch) {
+      return uncaughtMatch[1].trim();
+    }
+    
+    const serverMatch = message.match(/Server Error: (.*?)(\n| at )/);
+    if (serverMatch) {
+      return serverMatch[1].trim();
+    }
+    
+    if (message.startsWith("Error: ")) {
+      return message.substring(7);
+    }
+    
+    return message || "An unexpected error occurred";
+  }
+  return String(err);
+}

@@ -1,4 +1,4 @@
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
 // Login — verify email + passwordHash, return userId or throw
@@ -13,10 +13,10 @@ export const loginUser = mutation({
       .withIndex("by_email", (q) => q.eq("email", args.email))
       .first();
 
-    if (!user) throw new Error("Invalid email or password");
-    if (!user.passwordHash) throw new Error("Please use Google sign-in for this account");
+    if (!user) throw new ConvexError("Invalid email or password");
+    if (!user.passwordHash) throw new ConvexError("Please use Google sign-in for this account");
     if (user.passwordHash !== args.passwordHash)
-      throw new Error("Invalid email or password");
+      throw new ConvexError("Invalid email or password");
 
     return user._id;
   },
@@ -42,7 +42,7 @@ export const register = mutation({
       .withIndex("by_email", (q) => q.eq("email", args.email))
       .first();
     if (existing) {
-      throw new Error("Email already registered");
+      throw new ConvexError("Email already registered");
     }
 
     const userId = await ctx.db.insert("users", {

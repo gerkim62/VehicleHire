@@ -6,6 +6,7 @@ import { Input, Textarea } from "../components/ui/Input";
 import { Card, CardContent } from "../components/ui/Card";
 import { GoogleSignInButton } from "../components/ui/GoogleSignInButton";
 import { Car, User, Briefcase } from "lucide-react";
+import { getErrorMessage } from "../lib/utils";
 
 export const Route = createFileRoute("/register")({
   component: RegisterPage,
@@ -57,7 +58,7 @@ function RegisterPage() {
       });
       navigate({ to: "/dashboard" });
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Registration failed");
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }

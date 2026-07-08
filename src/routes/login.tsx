@@ -6,6 +6,7 @@ import { Input } from "../components/ui/Input";
 import { Card, CardContent } from "../components/ui/Card";
 import { GoogleSignInButton } from "../components/ui/GoogleSignInButton";
 import { Car, Mail, Lock } from "lucide-react";
+import { getErrorMessage } from "../lib/utils";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
@@ -32,7 +33,7 @@ function LoginPage() {
       await login(email, password);
       navigate({ to: "/dashboard" });
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Login failed");
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
