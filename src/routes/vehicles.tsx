@@ -62,7 +62,7 @@ export function VehiclesPage() {
         ) : filtered && filtered.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
             {filtered.map((vehicle: Vehicle) => (
-              <Link key={vehicle._id} to="/vehicle/$vehicleId" params={{ vehicleId: vehicle._id } as unknown as Record<string, string>}>
+              <Link key={vehicle._id} to="/vehicle/$vehicleId" params={{ vehicleId: vehicle._id }}>
                 <Card hover className="overflow-hidden h-full">
                   <div className="h-44 bg-surface-100 flex items-center justify-center">
                     {vehicle.photos.length > 0 ? (

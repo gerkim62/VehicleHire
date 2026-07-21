@@ -55,9 +55,11 @@ export function usePaystack() {
     // @paystack/inline-js adds PaystackPop to the global scope when loaded
     import("@paystack/inline-js").then((module) => {
       const PaystackPop = module.default ?? (module as { PaystackPop?: unknown }).PaystackPop;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const Ctor = PaystackPop as new () => any;
       const handler =
         typeof PaystackPop === "function"
-          ? new PaystackPop()
+          ? new Ctor()
           : PaystackPop;
 
       handler.newTransaction({
