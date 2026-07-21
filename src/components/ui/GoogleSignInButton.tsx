@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { getErrorMessage } from "../../lib/utils";
 
@@ -54,8 +54,29 @@ function parseJwt(token: string): {
 export function GoogleSignInButton({ role, onSuccess, onError }: Props) {
   const { loginWithGoogle } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [gsiReady, setGsiReady] = useState(() => !!window.google?.accounts?.id);
 
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+
+  // Wait for the GSI script to finish loading if it hasn't yet
+  useEffect(() => {
+    if (gsiReady) return;
+
+    const checkInterval = setInterval(() => {
+      if (window.google?.accounts?.id) {
+        setGsiReady(true);
+        clearInterval(checkInterval);
+      }
+    }, 100);
+
+    // Give up after 10 seconds
+    const timeout = setTimeout(() => clearInterval(checkInterval), 10_000);
+
+    return () => {
+      clearInterval(checkInterval);
+      clearTimeout(timeout);
+    };
+  }, [gsiReady]);
 
   const handleCredentialResponse = async (credential: string) => {
     setLoading(true);
@@ -84,7 +105,7 @@ export function GoogleSignInButton({ role, onSuccess, onError }: Props) {
       return;
     }
 
-    if (!window.google?.accounts?.id) {
+    if (!gsiReady || !window.google?.accounts?.id) {
       onError?.(
         "Google Identity Services not loaded. Check your internet connection and try again."
       );
