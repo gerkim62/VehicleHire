@@ -156,6 +156,7 @@ export const getByAgent = query({
           vehicle,
           clientName: client?.name || "Unknown",
           clientEmail: client?.email,
+          sessionId: session?._id || null,
           sessionStatus: session?.status || null,
         };
       })

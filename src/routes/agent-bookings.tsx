@@ -9,7 +9,7 @@ import { Button } from "../components/ui/Button";
 import { Modal } from "../components/ui/Modal";
 import { useToast } from "../hooks/useToast";
 import { useState } from "react";
-import { CalendarCheck, Play, X as XIcon } from "lucide-react";
+import { CalendarCheck, Play, X as XIcon, Eye } from "lucide-react";
 import { formatRelativeTime, formatCurrency, getErrorMessage } from "../lib/utils";
 
 export const Route = createFileRoute("/agent-bookings")({
@@ -95,10 +95,18 @@ export function AgentBookingsPage() {
             <h2 className="text-sm font-semibold text-surface-500 uppercase tracking-wider">Active Bookings</h2>
             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             {pending.map((b: any) => (
-              <Card key={b._id}>
+              <Card
+                key={b._id}
+                hover={!!b.sessionId}
+                onClick={
+                  b.sessionId
+                    ? () => navigate({ to: `/session/${b.sessionId}` })
+                    : undefined
+                }
+              >
                 <CardContent className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>
-                    <p className="font-medium text-surface-900">
+                    <p className="font-medium text-surface-900 hover:text-primary-600 transition-colors">
                       {b.vehicle?.make} {b.vehicle?.model}
                     </p>
                     <p className="text-xs text-surface-400">
@@ -111,7 +119,7 @@ export function AgentBookingsPage() {
                     )}
                     {b.notes && <p className="text-xs text-surface-400 mt-1 italic">Note: {b.notes}</p>}
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
                     <Badge variant={b.status === "confirmed" ? "success" : b.status === "cancelled" ? "danger" : "warning"} dot>
                       {b.status}
                     </Badge>
@@ -122,10 +130,26 @@ export function AgentBookingsPage() {
                       <Badge variant="default" dot>Session Ended</Badge>
                     )}
 
+                    {b.sessionId && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate({ to: `/session/${b.sessionId}` });
+                        }}
+                      >
+                        <Eye className="w-3.5 h-3.5" /> View Details
+                      </Button>
+                    )}
+
                     {b.status !== "cancelled" && !b.sessionStatus && (
                       <Button
                         size="sm"
-                        onClick={() => handleStart(b._id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleStart(b._id);
+                        }}
                         isLoading={actionLoading === b._id}
                       >
                         <Play className="w-3.5 h-3.5" /> Start Session
@@ -136,7 +160,10 @@ export function AgentBookingsPage() {
                       <Button
                         size="sm"
                         variant="ghost"
-                        onClick={() => setCancelConfirm(b._id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setCancelConfirm(b._id);
+                        }}
                       >
                         <XIcon className="w-3.5 h-3.5" />
                       </Button>
