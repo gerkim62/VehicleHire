@@ -77,10 +77,8 @@ export function BookingsPage() {
         {/* Header & Main Actions */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-primary-100 text-primary-800 border border-primary-200">
-                Hire Reservations
-              </span>
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-primary-100/80 text-primary-800 border border-primary-200/60 mb-1.5">
+              Hire Reservations
             </div>
             <h1 className="text-2xl lg:text-3xl font-serif font-bold text-surface-900 tracking-tight">
               My Bookings
@@ -115,19 +113,19 @@ export function BookingsPage() {
           </div>
         </div>
 
-        {/* Filter & Search Bar */}
-        <div className="bg-white p-3 sm:p-4 rounded-3xl border border-surface-200/70 shadow-xs mb-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+        {/* Filter & Search Controls */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mb-6">
           <div className="relative w-full sm:w-80">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400" />
             <Input
               placeholder="Search vehicle or agent..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-10 rounded-2xl border-surface-200 text-sm"
+              className="pl-10 rounded-2xl border-surface-200 bg-white text-sm shadow-2xs focus:ring-primary-500"
             />
           </div>
 
-          <div className="flex items-center gap-1.5 bg-surface-100/80 p-1 rounded-2xl border border-surface-200/50 w-full sm:w-auto overflow-x-auto no-scrollbar">
+          <div className="flex items-center gap-1.5 bg-white p-1.5 rounded-2xl border border-surface-200/70 shadow-2xs w-full sm:w-auto overflow-x-auto no-scrollbar">
             <button
               onClick={() => setFilter("all")}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
@@ -167,11 +165,11 @@ export function BookingsPage() {
         {!bookings ? (
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-28 bg-surface-100 rounded-3xl animate-pulse" />
+              <div key={i} className="h-24 bg-surface-100 rounded-3xl animate-pulse" />
             ))}
           </div>
         ) : filtered.length > 0 ? (
-          <div className="space-y-4 animate-fade-in">
+          <div className="space-y-3 animate-fade-in">
             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             {filtered.map((b: any) => {
               const photo = b.vehicle?.photos?.[0];
@@ -188,25 +186,27 @@ export function BookingsPage() {
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       
                       {/* Left: Vehicle Photo & Information */}
-                      <div className="flex items-start sm:items-center gap-4">
-                        <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-surface-100 overflow-hidden shrink-0 border border-surface-200/60 shadow-2xs relative">
+                      <div className="flex items-center gap-4">
+                        <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-primary-100/70 via-surface-100 to-surface-200/50 overflow-hidden shrink-0 border border-surface-200/60 shadow-2xs flex items-center justify-center relative">
                           {photo ? (
                             <img src={photo} alt={`${b.vehicle?.make} ${b.vehicle?.model}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                           ) : (
-                            <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-primary-50 to-surface-100 text-primary-600">
-                              <Car className="w-8 h-8 opacity-70" />
+                            <div className="flex flex-col items-center justify-center text-primary-700">
+                              <Car className="w-7 h-7 opacity-80" />
                             </div>
                           )}
                         </div>
 
-                        <div className="space-y-1.5 min-w-0 flex-1">
+                        <div className="space-y-1 min-w-0 flex-1">
                           <div className="flex flex-wrap items-center gap-2">
                             <h3 className="font-bold text-base sm:text-lg text-surface-900 group-hover:text-primary-600 transition-colors leading-tight">
                               {b.vehicle?.make} {b.vehicle?.model}
                             </h3>
-                            <span className="text-xs font-semibold text-surface-400 bg-surface-100 px-2 py-0.5 rounded-md">
-                              {b.vehicle?.year}
-                            </span>
+                            {b.vehicle?.year && (
+                              <span className="text-[11px] font-semibold text-surface-500 bg-surface-100 px-2 py-0.5 rounded-md">
+                                {b.vehicle.year}
+                              </span>
+                            )}
                             {b.vehicle?.totalReviews > 0 && (
                               <div className="flex items-center gap-1 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200/50 text-[11px]">
                                 <StarDisplay rating={Math.round(b.vehicle.averageRating)} />
@@ -240,11 +240,11 @@ export function BookingsPage() {
                       </div>
 
                       {/* Right: Status & Actions */}
-                      <div className="flex sm:flex-col items-end justify-between sm:justify-center gap-3 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-surface-100">
+                      <div className="flex sm:flex-col items-end justify-between sm:justify-center gap-2.5 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-surface-100">
                         <Badge
                           variant={b.status === "confirmed" ? "success" : b.status === "cancelled" ? "danger" : "warning"}
                           dot
-                          size="md"
+                          size="sm"
                         >
                           {b.status === "confirmed" ? "Confirmed" : b.status === "pending" ? "Pending Review" : "Cancelled"}
                         </Badge>
