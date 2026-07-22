@@ -16,6 +16,7 @@ import {
   Clock,
   ArrowRight,
   Shield,
+  ChevronRight,
 } from "lucide-react";
 import { formatCurrency, formatRelativeTime } from "../lib/utils";
 import { PendingAgentDashboard } from "../components/dashboard/PendingAgentDashboard";
@@ -134,18 +135,44 @@ function ClientDashboard() {
         </CardContent>
       </Card>
 
-      <div className="flex gap-4">
-        <Link to="/vehicles" className="flex-1">
-          <Button variant="outline" className="w-full">
-            <Car className="w-4 h-4" /> Browse Vehicles
-          </Button>
-        </Link>
-        <Link to="/history" className="flex-1">
-          <Button variant="ghost" className="w-full">
-            <Clock className="w-4 h-4" /> Hire History
-          </Button>
-        </Link>
-      </div>
+      <Card>
+        <CardContent>
+          <h3 className="font-semibold text-surface-900 mb-3">Quick Navigation</h3>
+          <div className="divide-y divide-surface-100 border border-surface-100 rounded-2xl overflow-hidden bg-white">
+            <Link
+              to="/vehicles"
+              className="flex items-center justify-between p-3.5 hover:bg-surface-50 transition-colors group cursor-pointer"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-primary-50 flex items-center justify-center text-primary-600 group-hover:bg-primary-600 group-hover:text-white transition-colors shrink-0">
+                  <Car className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="font-semibold text-surface-900 text-sm">Browse Vehicles</p>
+                  <p className="text-xs text-surface-500">Explore available vehicles and book your ride</p>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-surface-400 group-hover:text-surface-600 group-hover:translate-x-0.5 transition-all shrink-0" />
+            </Link>
+
+            <Link
+              to="/history"
+              className="flex items-center justify-between p-3.5 hover:bg-surface-50 transition-colors group cursor-pointer"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-primary-50 flex items-center justify-center text-primary-600 group-hover:bg-primary-600 group-hover:text-white transition-colors shrink-0">
+                  <Clock className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="font-semibold text-surface-900 text-sm">Hire History</p>
+                  <p className="text-xs text-surface-500">View completed vehicle hire sessions and receipts</p>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-surface-400 group-hover:text-surface-600 group-hover:translate-x-0.5 transition-all shrink-0" />
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
@@ -187,11 +214,60 @@ function AgentDashboard() {
         </Card>
       )}
 
-      <div className="grid sm:grid-cols-3 gap-4">
-        <Link to="/my-vehicles"><Button variant="outline" className="w-full"><Car className="w-4 h-4" /> My Vehicles</Button></Link>
-        <Link to="/agent-bookings"><Button variant="outline" className="w-full"><CalendarCheck className="w-4 h-4" /> Bookings</Button></Link>
-        <Link to="/active-sessions"><Button variant="outline" className="w-full"><Timer className="w-4 h-4" /> Sessions Map</Button></Link>
-      </div>
+      <Card>
+        <CardContent>
+          <h3 className="font-semibold text-surface-900 mb-3">Quick Navigation</h3>
+          <div className="divide-y divide-surface-100 border border-surface-100 rounded-2xl overflow-hidden bg-white">
+            <Link
+              to="/my-vehicles"
+              className="flex items-center justify-between p-3.5 hover:bg-surface-50 transition-colors group cursor-pointer"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-primary-50 flex items-center justify-center text-primary-600 group-hover:bg-primary-600 group-hover:text-white transition-colors shrink-0">
+                  <Car className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="font-semibold text-surface-900 text-sm">My Vehicles</p>
+                  <p className="text-xs text-surface-500">Manage vehicle listings, pricing, and availability</p>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-surface-400 group-hover:text-surface-600 group-hover:translate-x-0.5 transition-all shrink-0" />
+            </Link>
+
+            <Link
+              to="/agent-bookings"
+              className="flex items-center justify-between p-3.5 hover:bg-surface-50 transition-colors group cursor-pointer"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-primary-50 flex items-center justify-center text-primary-600 group-hover:bg-primary-600 group-hover:text-white transition-colors shrink-0">
+                  <CalendarCheck className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="font-semibold text-surface-900 text-sm">Bookings</p>
+                  <p className="text-xs text-surface-500">Review incoming customer booking requests</p>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-surface-400 group-hover:text-surface-600 group-hover:translate-x-0.5 transition-all shrink-0" />
+            </Link>
+
+            <Link
+              to="/active-sessions"
+              className="flex items-center justify-between p-3.5 hover:bg-surface-50 transition-colors group cursor-pointer"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-primary-50 flex items-center justify-center text-primary-600 group-hover:bg-primary-600 group-hover:text-white transition-colors shrink-0">
+                  <Timer className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="font-semibold text-surface-900 text-sm">Sessions Map</p>
+                  <p className="text-xs text-surface-500">Monitor active hires and live GPS locations</p>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-surface-400 group-hover:text-surface-600 group-hover:translate-x-0.5 transition-all shrink-0" />
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
@@ -240,11 +316,60 @@ function AdminDashboard() {
         )}
       </div>
 
-      <div className="grid sm:grid-cols-3 gap-4">
-        <Link to="/manage-agents"><Button variant="outline" className="w-full"><Shield className="w-4 h-4" /> Agent Approvals</Button></Link>
-        <Link to="/manage-users"><Button variant="outline" className="w-full"><Users className="w-4 h-4" /> Users</Button></Link>
-        <Link to="/all-sessions"><Button variant="outline" className="w-full"><Timer className="w-4 h-4" /> All Sessions</Button></Link>
-      </div>
+      <Card>
+        <CardContent>
+          <h3 className="font-semibold text-surface-900 mb-3">Quick Navigation</h3>
+          <div className="divide-y divide-surface-100 border border-surface-100 rounded-2xl overflow-hidden bg-white">
+            <Link
+              to="/manage-agents"
+              className="flex items-center justify-between p-3.5 hover:bg-surface-50 transition-colors group cursor-pointer"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-primary-50 flex items-center justify-center text-primary-600 group-hover:bg-primary-600 group-hover:text-white transition-colors shrink-0">
+                  <Shield className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="font-semibold text-surface-900 text-sm">Agent Approvals</p>
+                  <p className="text-xs text-surface-500">Review and verify new agent applications</p>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-surface-400 group-hover:text-surface-600 group-hover:translate-x-0.5 transition-all shrink-0" />
+            </Link>
+
+            <Link
+              to="/manage-users"
+              className="flex items-center justify-between p-3.5 hover:bg-surface-50 transition-colors group cursor-pointer"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-primary-50 flex items-center justify-center text-primary-600 group-hover:bg-primary-600 group-hover:text-white transition-colors shrink-0">
+                  <Users className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="font-semibold text-surface-900 text-sm">User Management</p>
+                  <p className="text-xs text-surface-500">Manage registered clients and agents</p>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-surface-400 group-hover:text-surface-600 group-hover:translate-x-0.5 transition-all shrink-0" />
+            </Link>
+
+            <Link
+              to="/all-sessions"
+              className="flex items-center justify-between p-3.5 hover:bg-surface-50 transition-colors group cursor-pointer"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-primary-50 flex items-center justify-center text-primary-600 group-hover:bg-primary-600 group-hover:text-white transition-colors shrink-0">
+                  <Timer className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="font-semibold text-surface-900 text-sm">All Sessions</p>
+                  <p className="text-xs text-surface-500">Monitor active vehicle sessions across the platform</p>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-surface-400 group-hover:text-surface-600 group-hover:translate-x-0.5 transition-all shrink-0" />
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
