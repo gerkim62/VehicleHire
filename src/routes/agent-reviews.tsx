@@ -20,8 +20,10 @@ export function AgentReviewsPage() {
   if (isLoading) return <div className="flex items-center justify-center min-h-[60vh]"><Spinner className="w-8 h-8" /></div>;
   if (!user || user.role !== "agent") { navigate({ to: "/login" }); return null; }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const avgRating = reviews && reviews.length > 0
-    ? (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ? (reviews.reduce((s: number, r: any) => s + r.rating, 0) / reviews.length).toFixed(1)
     : "—";
 
   return (
@@ -45,7 +47,8 @@ export function AgentReviewsPage() {
           <Spinner className="w-6 h-6" />
         ) : reviews.length > 0 ? (
           <div className="space-y-3 animate-fade-in">
-            {reviews.map((r) => (
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+            {reviews.map((r: any) => (
               <Card key={r._id}>
                 <CardContent>
                   <div className="flex items-start justify-between mb-2">

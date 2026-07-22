@@ -52,7 +52,8 @@ export function AllSessionsPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {sessions.map((s) => {
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                    {sessions.map((s: any) => {
                       const elapsed = now - s.startedAt;
                       const charge = calculateCharge(elapsed, s.rateAmount, s.rateUnit);
                       return (

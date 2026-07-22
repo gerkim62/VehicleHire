@@ -2,7 +2,7 @@ import { useCallback } from "react";
 
 interface PaystackOptions {
   email: string;
-  amount: number; // in the smallest currency unit (kobo for NGN, pesewas for GHS — but Paystack KES uses cents)
+  amount: number; // in the smallest currency unit (cents for KES: KES 500 -> 50000)
   currency?: string;
   reference: string;
   publicKey?: string;
@@ -18,6 +18,17 @@ interface PaystackResponse {
   message: string;
   transaction: string;
   trxref: string;
+}
+
+function isPlaceholderKey(key?: string): boolean {
+  if (!key) return true;
+  const lower = key.trim().toLowerCase();
+  return (
+    lower.includes("your_key") ||
+    lower.includes("xxxxxxxx") ||
+    lower === "pk_test_placeholder" ||
+    (!lower.startsWith("pk_test_") && !lower.startsWith("pk_live_"))
+  );
 }
 
 /**
@@ -36,48 +47,57 @@ export function usePaystack() {
     const publicKey =
       options.publicKey ?? import.meta.env.VITE_PAYSTACK_PUBLIC_KEY;
 
-    if (!publicKey) {
-      console.warn(
-        "[Paystack] No public key configured. Set VITE_PAYSTACK_PUBLIC_KEY in .env.local"
+    if (isPlaceholderKey(publicKey)) {
+      console.info(
+        "[Paystack Dev Mode] Placeholder or missing key detected (" +
+          (publicKey || "none") +
+          "). Simulating successful payment..."
       );
-      // Simulate success in dev so the rest of the flow can be tested
-      options.onSuccess({
-        reference: options.reference,
-        trans: "sim_" + Date.now(),
-        status: "success",
-        message: "Approved",
-        transaction: "sim_" + Date.now(),
-        trxref: options.reference,
-      });
+      // Simulate payment approval after short delay
+      setTimeout(() => {
+        const simTx = "sim_tx_" + Math.random().toString(36).substring(2, 10);
+        options.onSuccess({
+          reference: options.reference,
+          trans: simTx,
+          status: "success",
+          message: "Approved (Simulated)",
+          transaction: simTx,
+          trxref: options.reference,
+        });
+      }, 750);
       return;
     }
 
-    // @paystack/inline-js adds PaystackPop to the global scope when loaded
-    import("@paystack/inline-js").then((module) => {
-      const PaystackPop = module.default ?? (module as { PaystackPop?: unknown }).PaystackPop;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const Ctor = PaystackPop as new () => any;
-      const handler =
-        typeof PaystackPop === "function"
-          ? new Ctor()
-          : PaystackPop;
+    import("@paystack/inline-js")
+      .then((module) => {
+        // Handle export patterns across bundlers
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const PaystackPopConstructor: any =
+          module.default || (module as Record<string, unknown>).PaystackPop || module;
 
-      handler.newTransaction({
-        key: publicKey,
-        email: options.email,
-        amount: options.amount, // in kobo / cents
-        currency: options.currency ?? "KES",
-        ref: options.reference,
-        metadata: options.metadata ?? {},
-        onSuccess: (response: PaystackResponse) => {
-          options.onSuccess(response);
-        },
-        onCancel: () => {
-          options.onClose();
-        },
+        const handler = new PaystackPopConstructor();
+
+        handler.newTransaction({
+          key: publicKey,
+          email: options.email,
+          amount: Math.round(options.amount), // in cents / kobo
+          currency: options.currency ?? "KES",
+          ref: options.reference,
+          metadata: options.metadata ?? {},
+          onSuccess: (response: PaystackResponse) => {
+            options.onSuccess(response);
+          },
+          onCancel: () => {
+            options.onClose();
+          },
+        });
+      })
+      .catch((error) => {
+        console.error("[Paystack] Failed to load Paystack inline SDK:", error);
+        options.onClose();
       });
-    });
   }, []);
 
   return { pay };
 }
+

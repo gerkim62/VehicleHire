@@ -31,7 +31,8 @@ export function BookingsPage() {
           <Spinner className="w-6 h-6" />
         ) : bookings.length > 0 ? (
           <div className="space-y-3 animate-fade-in">
-            {bookings.map((b) => (
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+            {bookings.map((b: any) => (
               <Card key={b._id} hover>
                 <CardContent className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="flex items-center gap-4">
