@@ -4,10 +4,10 @@ import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { Sidebar } from "../components/layout/Sidebar";
 import { Card, CardContent } from "../components/ui/Card";
-import { Badge, Spinner, StarDisplay, EmptyState } from "../components/ui/Badge";
+import { Spinner, StarDisplay, EmptyState } from "../components/ui/Badge";
 import { Input } from "../components/ui/Input";
 import { useState, useMemo } from "react";
-import { Car, Search, Users as UsersIcon, Clock, Sparkles, Filter, ArrowRight, ShieldCheck } from "lucide-react";
+import { Car, Search, Users as UsersIcon, Clock, Sparkles, ArrowRight, ShieldCheck } from "lucide-react";
 import { formatCurrency } from "../lib/utils";
 import type { Vehicle } from "../lib/types";
 

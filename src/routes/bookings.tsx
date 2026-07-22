@@ -10,8 +10,8 @@ import { Input } from "../components/ui/Input";
 import { Modal } from "../components/ui/Modal";
 import { useToast } from "../hooks/useToast";
 import { useState, useMemo } from "react";
-import { CalendarCheck, Car, Clock, Eye, Search, Plus, User, ShieldCheck, XCircle, ChevronRight, MessageSquare } from "lucide-react";
-import { formatCurrency, formatRelativeTime, formatDate, getErrorMessage } from "../lib/utils";
+import { CalendarCheck, Car, Clock, Eye, Search, Plus, User, XCircle, ChevronRight, MessageSquare } from "lucide-react";
+import { formatCurrency, formatRelativeTime, getErrorMessage } from "../lib/utils";
 
 export const Route = createFileRoute("/bookings")({
   component: BookingsPage,
