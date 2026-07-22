@@ -86,7 +86,7 @@ export function Sidebar() {
       </nav>
 
       {/* Desktop & Tablet Sidebar (>= 768px, including 935px) */}
-      <aside className="hidden md:flex flex-col w-56 lg:w-64 min-h-[calc(100vh-4rem)] bg-white border-r border-surface-100 shrink-0">
+      <aside className="hidden md:flex flex-col w-56 lg:w-64 sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto bg-white border-r border-surface-100 shrink-0 self-start">
         <div className="flex-1 py-6 px-3 lg:px-4 space-y-1">
           <p className="px-3 mb-3 text-xs font-semibold text-surface-400 uppercase tracking-wider">
             {user.role === "admin" ? "Administration" : user.role === "agent" ? "Agent Panel" : "Navigation"}
