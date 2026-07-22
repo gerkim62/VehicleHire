@@ -47,7 +47,7 @@ export function AddVehiclePage() {
 
   if (user.agentStatus !== "approved") {
     return (
-      <div className="flex">
+      <div className="flex flex-col md:flex-row min-h-[calc(100vh-4rem)]">
         <Sidebar />
         <main className="flex-1 p-6 lg:p-8 max-w-2xl flex flex-col items-center justify-center min-h-[60vh] text-center">
           <div className="w-16 h-16 rounded-full bg-warning-50 flex items-center justify-center mb-4 text-warning-600">
@@ -112,7 +112,7 @@ export function AddVehiclePage() {
   };
 
   return (
-    <div className="flex">
+    <div className="flex flex-col md:flex-row min-h-[calc(100vh-4rem)]">
       <Sidebar />
       <main className="flex-1 p-6 lg:p-8 max-w-2xl">
         <button

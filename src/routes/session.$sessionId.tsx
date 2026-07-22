@@ -116,9 +116,9 @@ export function SessionPage() {
   const isPaid = payment?.status === "success";
 
   return (
-    <div className="flex">
+    <div className="flex flex-col md:flex-row min-h-[calc(100vh-4rem)]">
       <Sidebar />
-      <main className="flex-1 p-6 lg:p-8 max-w-3xl">
+      <main className="flex-1 p-6 lg:p-8 max-w-3xl pb-20 md:pb-8">
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-2">
             <Badge variant={isActive ? "success" : "default"} dot size="md">

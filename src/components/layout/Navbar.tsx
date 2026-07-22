@@ -16,6 +16,7 @@ import { Badge } from "../ui/Badge";
 import { formatRelativeTime } from "../../lib/utils";
 import type { Notification } from "../../lib/types";
 import type { Id } from "../../../convex/_generated/dataModel";
+import { getNavLinks } from "./Sidebar";
 
 export function Navbar() {
   const { user, logout } = useAuth();
@@ -222,7 +223,7 @@ export function Navbar() {
 
         {/* Mobile menu */}
         {mobileOpen && (
-          <div className="md:hidden py-4 border-t border-surface-100 animate-fade-in">
+          <div className="md:hidden py-4 border-t border-surface-100 animate-fade-in space-y-3">
             {!user ? (
               <div className="flex flex-col gap-2">
                 <Link
@@ -241,28 +242,54 @@ export function Navbar() {
                 </Link>
               </div>
             ) : (
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-3 px-4 py-2">
-                  <div className="w-10 h-10 rounded-xl bg-primary-500 flex items-center justify-center text-white text-sm font-semibold">
-                    <User className="w-5 h-5" />
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center gap-3 px-4 py-2 bg-surface-50 rounded-xl mx-2">
+                  <div className="w-10 h-10 rounded-xl bg-primary-500 flex items-center justify-center text-white text-sm font-semibold shrink-0">
+                    {user.avatarUrl ? (
+                      <img src={user.avatarUrl} alt={user.name} className="w-10 h-10 rounded-xl object-cover" />
+                    ) : (
+                      <User className="w-5 h-5" />
+                    )}
                   </div>
-                  <div>
-                    <p className="text-sm font-medium">{user.name}</p>
-                    <p className="text-xs text-surface-500">{user.email}</p>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">{user.name}</p>
+                    <p className="text-xs text-surface-500 truncate">{user.email}</p>
                   </div>
-                  {unreadCount > 0 && (
-                    <Badge variant="danger" size="sm">{unreadCount} new</Badge>
-                  )}
+                  <Badge variant={user.role === "admin" ? "danger" : user.role === "agent" ? "info" : "default"} size="sm">
+                    {user.role}
+                  </Badge>
                 </div>
-                <button
-                  onClick={() => {
-                    handleLogout();
-                    setMobileOpen(false);
-                  }}
-                  className="px-4 py-2.5 text-sm font-medium text-danger-600 rounded-xl hover:bg-danger-50 text-left cursor-pointer"
-                >
-                  Sign Out
-                </button>
+
+                {/* Mobile Role Nav Links */}
+                <div className="space-y-1 px-2">
+                  <p className="px-3 text-[10px] font-semibold text-surface-400 uppercase tracking-wider mb-1">
+                    Navigation
+                  </p>
+                  {getNavLinks(user.role).map((link) => (
+                    <Link
+                      key={link.to}
+                      to={link.to}
+                      onClick={() => setMobileOpen(false)}
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-surface-700 hover:bg-primary-50 hover:text-primary-700 transition-colors"
+                    >
+                      <span className="text-primary-600">{link.icon}</span>
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+
+                <div className="pt-2 border-t border-surface-100 px-2">
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setMobileOpen(false);
+                    }}
+                    className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-danger-600 rounded-xl hover:bg-danger-50 text-left cursor-pointer"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Sign Out
+                  </button>
+                </div>
               </div>
             )}
           </div>
