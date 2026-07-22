@@ -188,21 +188,19 @@ export const getAllUsers = query({
   },
 });
 
-// Get pending agents (admin)
-export const getPendingAgents = query({
+// Get all agents (admin)
+export const getAllAgents = query({
   handler: async (ctx) => {
-    return await ctx.db
-      .query("users")
-      .withIndex("by_agentStatus", (q) => q.eq("agentStatus", "pending"))
-      .collect();
+    const users = await ctx.db.query("users").collect();
+    return users.filter((u) => u.role === "agent");
   },
 });
 
-// Approve/reject agent (admin)
+// Approve/reject/change agent status (admin)
 export const updateAgentStatus = mutation({
   args: {
     userId: v.id("users"),
-    status: v.union(v.literal("approved"), v.literal("rejected")),
+    status: v.union(v.literal("approved"), v.literal("rejected"), v.literal("pending")),
   },
   handler: async (ctx, args) => {
     const user = await ctx.db.get(args.userId);
@@ -213,13 +211,20 @@ export const updateAgentStatus = mutation({
 
     // Notify the agent of the decision
     const isApproved = args.status === "approved";
+    const isPending = args.status === "pending";
     await ctx.db.insert("notifications", {
       userId: args.userId,
       type: isApproved ? "agent_approved" : "agent_rejected",
-      title: isApproved ? "Application Approved 🎉" : "Application Rejected",
+      title: isApproved
+        ? "Application Approved 🎉"
+        : isPending
+          ? "Status Updated to Pending ⏳"
+          : "Application Status Updated",
       message: isApproved
         ? "Your hire agent account has been approved! You can now list vehicles and start receiving bookings."
-        : "Your agent registration was reviewed and could not be approved at this time. Please contact the administrator for more details.",
+        : isPending
+          ? "Your agent account status has been placed back under review by the administrator."
+          : "Your agent registration status has been updated to rejected. Please contact the administrator for details.",
       isRead: false,
       createdAt: Date.now(),
     });

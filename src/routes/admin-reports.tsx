@@ -21,9 +21,9 @@ export function AdminReportsPage() {
   if (!user || user.role !== "admin") { navigate({ to: "/login" }); return null; }
 
   return (
-    <div className="flex">
+    <div className="flex flex-col md:flex-row min-h-[calc(100vh-4rem)]">
       <Sidebar />
-      <main className="flex-1 p-6 lg:p-8 max-w-5xl">
+      <main className="flex-1 min-w-0 p-6 lg:p-8 w-full max-w-7xl pb-20 md:pb-8">
         <h1 className="text-2xl font-bold text-surface-900 mb-1">Platform Reports</h1>
         <p className="text-surface-500 mb-6">Analytics and metrics</p>
 

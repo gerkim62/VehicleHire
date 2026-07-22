@@ -16,8 +16,16 @@ import {
   Clock,
   ArrowRight,
   Shield,
+  ChevronRight,
+  Activity,
+  CheckCircle2,
+  ShieldCheck,
+  ShieldAlert,
+  CreditCard,
 } from "lucide-react";
 import { formatCurrency, formatRelativeTime } from "../lib/utils";
+import { PendingAgentDashboard } from "../components/dashboard/PendingAgentDashboard";
+import { RejectedAgentDashboard } from "../components/dashboard/RejectedAgentDashboard";
 import type { Booking, Vehicle, Session, User as DBUser } from "../lib/types";
 
 export const Route = createFileRoute("/dashboard")({
@@ -42,9 +50,9 @@ export function DashboardPage() {
   }
 
   return (
-    <div className="flex">
+    <div className="flex flex-col md:flex-row min-h-[calc(100vh-4rem)]">
       <Sidebar />
-      <main className="flex-1 p-6 lg:p-8 max-w-6xl">
+      <main className="flex-1 min-w-0 p-6 lg:p-8 w-full max-w-7xl pb-20 md:pb-8">
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-surface-900">
             {user.role === "admin"
@@ -58,32 +66,10 @@ export function DashboardPage() {
           </p>
         </div>
 
-        {user.role === "agent" && user.agentStatus === "pending" && (
-          <div className="mb-6 p-4 rounded-2xl bg-warning-50 border border-warning-500/20">
-            <div className="flex items-center gap-3">
-              <Shield className="w-5 h-5 text-warning-600" />
-              <div>
-                <p className="font-semibold text-warning-700">Account Pending Approval</p>
-                <p className="text-sm text-warning-600">Your agent account is awaiting administrator approval. You'll be able to list vehicles once approved.</p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {user.role === "agent" && user.agentStatus === "rejected" && (
-          <div className="mb-6 p-4 rounded-2xl bg-danger-50 border border-danger-500/20">
-            <div className="flex items-center gap-3">
-              <Shield className="w-5 h-5 text-danger-600" />
-              <div>
-                <p className="font-semibold text-danger-700">Account Rejected</p>
-                <p className="text-sm text-danger-600">Your agent registration was not approved. Please contact the administrator.</p>
-              </div>
-            </div>
-          </div>
-        )}
-
         {user.role === "client" && <ClientDashboard />}
         {user.role === "agent" && user.agentStatus === "approved" && <AgentDashboard />}
+        {user.role === "agent" && user.agentStatus === "pending" && <PendingAgentDashboard user={user} />}
+        {user.role === "agent" && user.agentStatus === "rejected" && <RejectedAgentDashboard user={user} />}
         {user.role === "admin" && <AdminDashboard />}
       </main>
     </div>
@@ -154,18 +140,44 @@ function ClientDashboard() {
         </CardContent>
       </Card>
 
-      <div className="flex gap-4">
-        <Link to="/vehicles" className="flex-1">
-          <Button variant="outline" className="w-full">
-            <Car className="w-4 h-4" /> Browse Vehicles
-          </Button>
-        </Link>
-        <Link to="/history" className="flex-1">
-          <Button variant="ghost" className="w-full">
-            <Clock className="w-4 h-4" /> Hire History
-          </Button>
-        </Link>
-      </div>
+      <Card>
+        <CardContent>
+          <h3 className="font-semibold text-surface-900 mb-3">Quick Navigation</h3>
+          <div className="divide-y divide-surface-100 border border-surface-100 rounded-2xl overflow-hidden bg-white">
+            <Link
+              to="/vehicles"
+              className="flex items-center justify-between p-3.5 hover:bg-surface-50 transition-colors group cursor-pointer"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-primary-50 flex items-center justify-center text-primary-600 group-hover:bg-primary-600 group-hover:text-white transition-colors shrink-0">
+                  <Car className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="font-semibold text-surface-900 text-sm">Browse Vehicles</p>
+                  <p className="text-xs text-surface-500">Explore available vehicles and book your ride</p>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-surface-400 group-hover:text-surface-600 group-hover:translate-x-0.5 transition-all shrink-0" />
+            </Link>
+
+            <Link
+              to="/history"
+              className="flex items-center justify-between p-3.5 hover:bg-surface-50 transition-colors group cursor-pointer"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-primary-50 flex items-center justify-center text-primary-600 group-hover:bg-primary-600 group-hover:text-white transition-colors shrink-0">
+                  <Clock className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="font-semibold text-surface-900 text-sm">Hire History</p>
+                  <p className="text-xs text-surface-500">View completed vehicle hire sessions and receipts</p>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-surface-400 group-hover:text-surface-600 group-hover:translate-x-0.5 transition-all shrink-0" />
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
@@ -207,11 +219,60 @@ function AgentDashboard() {
         </Card>
       )}
 
-      <div className="grid sm:grid-cols-3 gap-4">
-        <Link to="/my-vehicles"><Button variant="outline" className="w-full"><Car className="w-4 h-4" /> My Vehicles</Button></Link>
-        <Link to="/agent-bookings"><Button variant="outline" className="w-full"><CalendarCheck className="w-4 h-4" /> Bookings</Button></Link>
-        <Link to="/active-sessions"><Button variant="outline" className="w-full"><Timer className="w-4 h-4" /> Sessions Map</Button></Link>
-      </div>
+      <Card>
+        <CardContent>
+          <h3 className="font-semibold text-surface-900 mb-3">Quick Navigation</h3>
+          <div className="divide-y divide-surface-100 border border-surface-100 rounded-2xl overflow-hidden bg-white">
+            <Link
+              to="/my-vehicles"
+              className="flex items-center justify-between p-3.5 hover:bg-surface-50 transition-colors group cursor-pointer"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-primary-50 flex items-center justify-center text-primary-600 group-hover:bg-primary-600 group-hover:text-white transition-colors shrink-0">
+                  <Car className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="font-semibold text-surface-900 text-sm">My Vehicles</p>
+                  <p className="text-xs text-surface-500">Manage vehicle listings, pricing, and availability</p>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-surface-400 group-hover:text-surface-600 group-hover:translate-x-0.5 transition-all shrink-0" />
+            </Link>
+
+            <Link
+              to="/agent-bookings"
+              className="flex items-center justify-between p-3.5 hover:bg-surface-50 transition-colors group cursor-pointer"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-primary-50 flex items-center justify-center text-primary-600 group-hover:bg-primary-600 group-hover:text-white transition-colors shrink-0">
+                  <CalendarCheck className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="font-semibold text-surface-900 text-sm">Bookings</p>
+                  <p className="text-xs text-surface-500">Review incoming customer booking requests</p>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-surface-400 group-hover:text-surface-600 group-hover:translate-x-0.5 transition-all shrink-0" />
+            </Link>
+
+            <Link
+              to="/active-sessions"
+              className="flex items-center justify-between p-3.5 hover:bg-surface-50 transition-colors group cursor-pointer"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-primary-50 flex items-center justify-center text-primary-600 group-hover:bg-primary-600 group-hover:text-white transition-colors shrink-0">
+                  <Timer className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="font-semibold text-surface-900 text-sm">Sessions Map</p>
+                  <p className="text-xs text-surface-500">Monitor active hires and live GPS locations</p>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-surface-400 group-hover:text-surface-600 group-hover:translate-x-0.5 transition-all shrink-0" />
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
@@ -230,41 +291,170 @@ function AdminDashboard() {
         <StatCard title="Total Revenue" value={formatCurrency(stats.totalRevenue)} icon={<TrendingUp className="w-5 h-5" />} color="accent" />
       </div>
 
-      <div className="grid sm:grid-cols-2 gap-4">
-        <Card>
-          <CardContent>
-            <h3 className="font-semibold mb-2">Platform Overview</h3>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between"><span className="text-surface-500">Total Vehicles</span><span className="font-medium">{stats.totalVehicles}</span></div>
-              <div className="flex justify-between"><span className="text-surface-500">Available Vehicles</span><span className="font-medium">{stats.activeVehicles}</span></div>
-              <div className="flex justify-between"><span className="text-surface-500">Completed Sessions</span><span className="font-medium">{stats.completedSessions}</span></div>
-              <div className="flex justify-between"><span className="text-surface-500">Total Payments</span><span className="font-medium">{stats.totalPayments}</span></div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <Card className="h-full">
+          <CardContent className="flex flex-col justify-between h-full space-y-4">
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-semibold text-surface-900 flex items-center gap-2 text-base">
+                  <Activity className="w-4 h-4 text-primary-600" />
+                  Platform Overview
+                </h3>
+                <Badge variant="default" size="sm">System Metrics</Badge>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-3 pt-1">
+                <div className="p-3 rounded-xl bg-surface-50 border border-surface-100/60 flex items-center justify-between">
+                  <div>
+                    <p className="text-xs text-surface-500 font-medium">Total Vehicles</p>
+                    <p className="text-lg font-bold text-surface-900 mt-0.5">{stats.totalVehicles}</p>
+                  </div>
+                  <div className="w-8 h-8 rounded-lg bg-primary-50 text-primary-600 flex items-center justify-center shrink-0">
+                    <Car className="w-4 h-4" />
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-xl bg-surface-50 border border-surface-100/60 flex items-center justify-between">
+                  <div>
+                    <p className="text-xs text-surface-500 font-medium">Available Fleet</p>
+                    <p className="text-lg font-bold text-surface-900 mt-0.5">{stats.activeVehicles}</p>
+                  </div>
+                  <div className="w-8 h-8 rounded-lg bg-success-50 text-success-600 flex items-center justify-center shrink-0">
+                    <CheckCircle2 className="w-4 h-4" />
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-xl bg-surface-50 border border-surface-100/60 flex items-center justify-between">
+                  <div>
+                    <p className="text-xs text-surface-500 font-medium">Completed Hires</p>
+                    <p className="text-lg font-bold text-surface-900 mt-0.5">{stats.completedSessions}</p>
+                  </div>
+                  <div className="w-8 h-8 rounded-lg bg-warning-50 text-warning-600 flex items-center justify-center shrink-0">
+                    <CalendarCheck className="w-4 h-4" />
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-xl bg-surface-50 border border-surface-100/60 flex items-center justify-between">
+                  <div>
+                    <p className="text-xs text-surface-500 font-medium">Total Payments</p>
+                    <p className="text-lg font-bold text-surface-900 mt-0.5">{stats.totalPayments}</p>
+                  </div>
+                  <div className="w-8 h-8 rounded-lg bg-accent-50 text-accent-600 flex items-center justify-center shrink-0">
+                    <CreditCard className="w-4 h-4" />
+                  </div>
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        {stats.pendingAgents > 0 && (
-          <Card className="border-warning-200">
-            <CardContent>
-              <h3 className="font-semibold mb-2 text-warning-700">Pending Approvals</h3>
-              <p className="text-sm text-surface-500 mb-3">
-                {stats.pendingAgents} agent{stats.pendingAgents > 1 ? "s" : ""} awaiting review.
-              </p>
-              <Link to="/manage-agents">
-                <Button size="sm" variant="outline">
-                  Review Now <ArrowRight className="w-4 h-4" />
-                </Button>
-              </Link>
+        {stats.pendingAgents > 0 ? (
+          <Card className="border-warning-200 bg-warning-50/20 h-full">
+            <CardContent className="flex flex-col justify-between h-full">
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-semibold text-warning-900 flex items-center gap-2 text-base">
+                    <ShieldAlert className="w-4.5 h-4.5 text-warning-600" />
+                    Pending Agent Approvals
+                  </h3>
+                  <Badge variant="warning" dot>Action Required</Badge>
+                </div>
+                <p className="text-sm text-surface-600 leading-relaxed mb-4">
+                  There {stats.pendingAgents === 1 ? "is" : "are"}{" "}
+                  <span className="font-semibold text-surface-900">{stats.pendingAgents} agent application{stats.pendingAgents > 1 ? "s" : ""}</span>{" "}
+                  awaiting admin verification and document review before accessing agent features.
+                </p>
+              </div>
+              <div className="pt-2">
+                <Link to="/manage-agents">
+                  <Button size="sm" className="w-full sm:w-auto">
+                    Review Applications <ArrowRight className="w-4 h-4 ml-1" />
+                  </Button>
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card className="h-full">
+            <CardContent className="flex flex-col justify-between h-full">
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-semibold text-surface-900 flex items-center gap-2 text-base">
+                    <ShieldCheck className="w-4.5 h-4.5 text-success-600" />
+                    Agent Verification Status
+                  </h3>
+                  <Badge variant="success" dot>All Verified</Badge>
+                </div>
+                <p className="text-sm text-surface-500 leading-relaxed mb-4">
+                  All registered agent applications have been reviewed and approved. Platform agent verification is fully up to date.
+                </p>
+              </div>
+              <div className="pt-2">
+                <Link to="/manage-agents">
+                  <Button size="sm" variant="outline" className="w-full sm:w-auto">
+                    Manage Agents <ArrowRight className="w-4 h-4 ml-1" />
+                  </Button>
+                </Link>
+              </div>
             </CardContent>
           </Card>
         )}
       </div>
 
-      <div className="grid sm:grid-cols-3 gap-4">
-        <Link to="/manage-agents"><Button variant="outline" className="w-full"><Shield className="w-4 h-4" /> Agent Approvals</Button></Link>
-        <Link to="/manage-users"><Button variant="outline" className="w-full"><Users className="w-4 h-4" /> Users</Button></Link>
-        <Link to="/all-sessions"><Button variant="outline" className="w-full"><Timer className="w-4 h-4" /> All Sessions</Button></Link>
-      </div>
+      <Card>
+        <CardContent>
+          <h3 className="font-semibold text-surface-900 mb-3">Quick Navigation</h3>
+          <div className="divide-y divide-surface-100 border border-surface-100 rounded-2xl overflow-hidden bg-white">
+            <Link
+              to="/manage-agents"
+              className="flex items-center justify-between p-3.5 hover:bg-surface-50 transition-colors group cursor-pointer"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-primary-50 flex items-center justify-center text-primary-600 group-hover:bg-primary-600 group-hover:text-white transition-colors shrink-0">
+                  <Shield className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="font-semibold text-surface-900 text-sm">Agent Approvals</p>
+                  <p className="text-xs text-surface-500">Review and verify new agent applications</p>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-surface-400 group-hover:text-surface-600 group-hover:translate-x-0.5 transition-all shrink-0" />
+            </Link>
+
+            <Link
+              to="/manage-users"
+              className="flex items-center justify-between p-3.5 hover:bg-surface-50 transition-colors group cursor-pointer"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-primary-50 flex items-center justify-center text-primary-600 group-hover:bg-primary-600 group-hover:text-white transition-colors shrink-0">
+                  <Users className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="font-semibold text-surface-900 text-sm">User Management</p>
+                  <p className="text-xs text-surface-500">Manage registered clients and agents</p>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-surface-400 group-hover:text-surface-600 group-hover:translate-x-0.5 transition-all shrink-0" />
+            </Link>
+
+            <Link
+              to="/all-sessions"
+              className="flex items-center justify-between p-3.5 hover:bg-surface-50 transition-colors group cursor-pointer"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-primary-50 flex items-center justify-center text-primary-600 group-hover:bg-primary-600 group-hover:text-white transition-colors shrink-0">
+                  <Timer className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="font-semibold text-surface-900 text-sm">All Sessions</p>
+                  <p className="text-xs text-surface-500">Monitor active vehicle sessions across the platform</p>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-surface-400 group-hover:text-surface-600 group-hover:translate-x-0.5 transition-all shrink-0" />
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

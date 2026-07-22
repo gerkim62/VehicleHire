@@ -5,6 +5,7 @@ interface BadgeProps {
   variant?: "default" | "success" | "warning" | "danger" | "info" | "outline";
   size?: "sm" | "md";
   dot?: boolean;
+  className?: string;
 }
 
 export function Badge({
@@ -12,6 +13,7 @@ export function Badge({
   variant = "default",
   size = "sm",
   dot = false,
+  className,
 }: BadgeProps) {
   const variants = {
     default: "bg-surface-100 text-surface-700",
@@ -32,7 +34,8 @@ export function Badge({
       className={cn(
         "inline-flex items-center gap-1.5 font-medium rounded-full",
         variants[variant],
-        sizes[size]
+        sizes[size],
+        className
       )}
     >
       {dot && (
