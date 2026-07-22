@@ -8,8 +8,8 @@ import { Badge, Spinner, EmptyState } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
 import { Modal } from "../components/ui/Modal";
 import { useToast } from "../hooks/useToast";
-import { useState, useEffect, useRef, useMemo } from "react";
-import { Timer, MapPin, Square, ShieldAlert, Car, Zap } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Timer, MapPin, Square, ShieldAlert, Car } from "lucide-react";
 import { formatDuration, formatCurrency, calculateCharge, getErrorMessage } from "../lib/utils";
 import type L from "leaflet";
 

@@ -7,7 +7,7 @@ import { Card, CardContent } from "../components/ui/Card";
 import { Badge, Spinner, EmptyState } from "../components/ui/Badge";
 import { Input } from "../components/ui/Input";
 import { useState, useMemo } from "react";
-import { Search, Users, Shield, UserCheck, UserX } from "lucide-react";
+import { Search, Users } from "lucide-react";
 import { formatDate, getErrorMessage } from "../lib/utils";
 import type { User as DBUser } from "../lib/types";
 import { useToast } from "../hooks/useToast";

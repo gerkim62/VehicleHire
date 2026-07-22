@@ -9,7 +9,7 @@ import { Button } from "../components/ui/Button";
 import { Modal } from "../components/ui/Modal";
 import { useToast } from "../hooks/useToast";
 import { useState, useMemo } from "react";
-import { CalendarCheck, Play, X as XIcon, Eye, ShieldAlert, User, Clock, Car } from "lucide-react";
+import { CalendarCheck, Play, X as XIcon, Eye, ShieldAlert, Clock } from "lucide-react";
 import { formatRelativeTime, formatCurrency, getErrorMessage } from "../lib/utils";
 
 export const Route = createFileRoute("/agent-bookings")({

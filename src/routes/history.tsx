@@ -11,7 +11,7 @@ import { Input, Textarea } from "../components/ui/Input";
 import { usePaystack } from "../hooks/usePaystack";
 import { useToast } from "../hooks/useToast";
 import { useState, useMemo } from "react";
-import { History as HistoryIcon, Star, CreditCard, CheckCircle, Clock, Car, ChevronRight, Search, Sparkles } from "lucide-react";
+import { History as HistoryIcon, Star, CreditCard, CheckCircle, Clock, Car, ChevronRight, Search } from "lucide-react";
 import { formatCurrency, formatDuration, formatDate, generateReference, getErrorMessage } from "../lib/utils";
 import type { Id } from "../../convex/_generated/dataModel";
 import type { Session, Vehicle, User as DBUser } from "../lib/types";

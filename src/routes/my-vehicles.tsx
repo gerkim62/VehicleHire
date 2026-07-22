@@ -7,7 +7,7 @@ import { Card, CardContent } from "../components/ui/Card";
 import { Badge, Spinner, StarDisplay, EmptyState } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
 import { useState, useMemo } from "react";
-import { Car, Plus, Eye, EyeOff, ShieldAlert, Sparkles, CheckCircle2, Clock, Users } from "lucide-react";
+import { Car, Plus, Eye, EyeOff, ShieldAlert } from "lucide-react";
 import { formatCurrency } from "../lib/utils";
 import type { Vehicle } from "../lib/types";
 

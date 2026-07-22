@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "../hooks/useAuth";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
@@ -12,7 +12,7 @@ import { useGeolocation } from "../hooks/useGeolocation";
 import { usePaystackRedirect } from "../hooks/usePaystackRedirect";
 import { useToast } from "../hooks/useToast";
 import { formatDuration, formatCurrency, calculateCharge } from "../lib/utils";
-import { Timer, DollarSign, Car, MapPin, CreditCard, CheckCircle, Loader2, Receipt, Copy, Check, Clock, Calendar, Hash, ShieldCheck, Sparkles, ArrowLeft } from "lucide-react";
+import { Timer, DollarSign, Car, MapPin, CreditCard, CheckCircle, Loader2, Receipt, Copy, Check, Clock, Calendar, Hash, ShieldCheck, Sparkles } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type L from "leaflet";
 
