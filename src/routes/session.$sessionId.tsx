@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useAuth } from "../hooks/useAuth";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
@@ -12,8 +12,8 @@ import { useGeolocation } from "../hooks/useGeolocation";
 import { usePaystackRedirect } from "../hooks/usePaystackRedirect";
 import { useToast } from "../hooks/useToast";
 import { formatDuration, formatCurrency, calculateCharge } from "../lib/utils";
-import { Timer, DollarSign, Car, MapPin, CreditCard, CheckCircle, Loader2 } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { Timer, DollarSign, Car, MapPin, CreditCard, CheckCircle, Loader2, Receipt, Copy, Check, Clock, Calendar, Hash, ShieldCheck, Sparkles, ArrowLeft } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import type L from "leaflet";
 
 export const Route = createFileRoute("/session/$sessionId")({
@@ -26,6 +26,14 @@ export function SessionPage() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { initiatePayment, loading: payLoading, error: payError } = usePaystackRedirect();
+  const [copiedField, setCopiedField] = useState<string | null>(null);
+
+  const handleCopy = (text: string, label: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedField(label);
+    toast(`${label} copied to clipboard`, "info");
+    setTimeout(() => setCopiedField(null), 2000);
+  };
 
   const session = useQuery(api.sessions.getById, {
     sessionId: sessionId as Id<"sessions">,
@@ -227,49 +235,137 @@ export function SessionPage() {
 
         {/* Completed session — invoice + payment */}
         {!isActive && session.totalCharge && (
-          <Card className="mt-6">
-            <CardContent className="text-center py-6">
-              <p className="text-sm text-surface-500 mb-2">Final Invoice</p>
-              <p className="text-3xl font-bold text-surface-900">{formatCurrency(session.totalCharge)}</p>
-              <p className="text-sm text-surface-400 mt-1">
-                Duration: {session.durationMs ? formatDuration(session.durationMs) : "—"}
-              </p>
+          <Card className="mt-6 border border-surface-200/80 shadow-xs rounded-3xl overflow-hidden bg-white">
+            <CardContent className="py-8 px-6 sm:px-8 text-center">
+              
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-primary-50 text-primary-700 border border-primary-100 mb-3">
+                <Receipt className="w-3.5 h-3.5" /> Official Invoice
+              </div>
 
-              {/* Payment action */}
+              <h2 className="text-[11px] font-bold uppercase tracking-wider text-surface-400 mb-1">
+                Final Amount Due & Paid
+              </h2>
+
+              <div className="flex items-baseline justify-center gap-1.5 my-2">
+                <span className="text-4xl sm:text-5xl font-black text-surface-900 tracking-tight">
+                  {formatCurrency(session.totalCharge)}
+                </span>
+              </div>
+
+              <div className="flex flex-wrap items-center justify-center gap-2 mt-3 mb-6">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-surface-100/80 text-surface-600 text-xs font-medium">
+                  <Clock className="w-3.5 h-3.5 text-surface-400" />
+                  Duration: <span className="font-semibold text-surface-900 font-mono">{displayDuration}</span>
+                </div>
+                {session.rateAmount && (
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-surface-100/80 text-surface-600 text-xs font-medium">
+                    Rate: <span className="font-semibold text-surface-900">{formatCurrency(session.rateAmount)}/{session.rateUnit}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Payment action / Receipt details */}
               <div className="mt-6">
-                {isPaid ? (
-                  <div className="bg-success-50 border border-success-200 rounded-xl p-4 max-w-md mx-auto text-left">
-                    <div className="flex items-center gap-2 text-success-700 font-semibold mb-2">
-                      <CheckCircle className="w-5 h-5 text-success-600" />
-                      Payment Verified & Completed
+                {isPaid && payment ? (
+                  <div className="bg-gradient-to-b from-emerald-50/90 via-emerald-50/40 to-teal-50/20 border border-emerald-200/80 rounded-2xl p-5 sm:p-6 text-left max-w-lg mx-auto shadow-2xs">
+                    {/* Header */}
+                    <div className="flex items-center justify-between pb-3.5 mb-4 border-b border-emerald-200/60">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-xs shrink-0">
+                          <ShieldCheck className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-surface-900 text-sm sm:text-base leading-tight flex items-center gap-1.5">
+                            Payment Verified & Completed
+                          </h4>
+                          <p className="text-[11px] text-emerald-700 font-medium">
+                            Processed securely via Paystack
+                          </p>
+                        </div>
+                      </div>
+                      <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-200/80 shadow-2xs">
+                        Paid
+                      </span>
                     </div>
-                    <div className="space-y-1 text-xs text-surface-600 font-mono">
-                      <p><span className="text-surface-400 font-sans">Reference:</span> {payment.paystackReference}</p>
+
+                    {/* Transaction Metadata Grid */}
+                    <div className="space-y-3 text-xs">
+                      <div>
+                        <span className="text-[11px] font-semibold text-surface-500 block mb-1 flex items-center gap-1">
+                          <Hash className="w-3.5 h-3.5 text-emerald-600" /> Reference Code
+                        </span>
+                        <div
+                          onClick={() => handleCopy(payment.paystackReference, "Reference Code")}
+                          className="bg-white/90 hover:bg-white border border-emerald-200/80 hover:border-emerald-300 rounded-xl px-3.5 py-2.5 flex items-center justify-between gap-2 cursor-pointer transition-all shadow-2xs group"
+                        >
+                          <code className="font-mono text-xs font-bold text-emerald-950 tracking-tight break-all">
+                            {payment.paystackReference}
+                          </code>
+                          <button className="text-surface-400 group-hover:text-emerald-700 p-1 shrink-0 transition-colors" title="Copy reference">
+                            {copiedField === "Reference Code" ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+                          </button>
+                        </div>
+                      </div>
+
                       {payment.paystackTransactionId && (
-                        <p><span className="text-surface-400 font-sans">Transaction ID:</span> {payment.paystackTransactionId}</p>
+                        <div>
+                          <span className="text-[11px] font-semibold text-surface-500 block mb-1 flex items-center gap-1">
+                            <Sparkles className="w-3.5 h-3.5 text-emerald-600" /> Paystack Transaction ID
+                          </span>
+                          <div
+                            onClick={() => handleCopy(payment.paystackTransactionId!, "Transaction ID")}
+                            className="bg-white/90 hover:bg-white border border-emerald-200/80 hover:border-emerald-300 rounded-xl px-3.5 py-2.5 flex items-center justify-between gap-2 cursor-pointer transition-all shadow-2xs group"
+                          >
+                            <code className="font-mono text-xs font-bold text-surface-800 tracking-tight">
+                              {payment.paystackTransactionId}
+                            </code>
+                            <button className="text-surface-400 group-hover:text-emerald-700 p-1 shrink-0 transition-colors" title="Copy transaction ID">
+                              {copiedField === "Transaction ID" ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+                            </button>
+                          </div>
+                        </div>
                       )}
+
                       {payment.paidAt && (
-                        <p><span className="text-surface-400 font-sans">Paid At:</span> {new Date(payment.paidAt).toLocaleString()}</p>
+                        <div className="pt-2 flex items-center justify-between text-xs text-surface-500 border-t border-emerald-100/80">
+                          <span className="flex items-center gap-1.5 text-surface-500 font-medium">
+                            <Calendar className="w-3.5 h-3.5 text-emerald-600" /> Paid At
+                          </span>
+                          <span className="font-semibold text-surface-800 font-mono">
+                            {new Date(payment.paidAt).toLocaleString("en-KE", {
+                              dateStyle: "medium",
+                              timeStyle: "medium",
+                            })}
+                          </span>
+                        </div>
                       )}
                     </div>
+
                   </div>
                 ) : user.role === "client" ? (
-                  <Button
-                    onClick={handlePay}
-                    size="lg"
-                    className="w-full sm:w-auto"
-                    isLoading={payLoading}
-                    disabled={payLoading}
-                    id="session-pay-btn"
-                  >
-                    {payLoading ? (
-                      <><Loader2 className="w-4 h-4 animate-spin" /> Redirecting to Paystack…</>
-                    ) : (
-                      <><CreditCard className="w-4 h-4" /> Pay {formatCurrency(session.totalCharge)} via Paystack</>
-                    )}
-                  </Button>
+                  <div className="max-w-md mx-auto bg-primary-50/50 border border-primary-100 rounded-2xl p-5 text-center">
+                    <p className="text-xs text-surface-600 mb-4">
+                      Complete your payment to finalize the rental session and receive your digital receipt.
+                    </p>
+                    <Button
+                      onClick={handlePay}
+                      size="lg"
+                      className="w-full rounded-xl shadow-xs text-sm font-semibold"
+                      isLoading={payLoading}
+                      disabled={payLoading}
+                      id="session-pay-btn"
+                    >
+                      {payLoading ? (
+                        <><Loader2 className="w-4 h-4 animate-spin" /> Redirecting to Paystack…</>
+                      ) : (
+                        <><CreditCard className="w-4 h-4" /> Pay {formatCurrency(session.totalCharge)} via Paystack</>
+                      )}
+                    </Button>
+                  </div>
                 ) : (
-                  <Badge variant="warning" size="md">Payment Pending from Client</Badge>
+                  <Badge variant="warning" size="md" className="py-2 px-4 rounded-xl font-semibold">
+                    Payment Pending from Client
+                  </Badge>
                 )}
               </div>
             </CardContent>
