@@ -21,10 +21,10 @@ declare module "@paystack/inline-js" {
     newTransaction: (options: PaystackOptions) => void;
   }
 
-  const PaystackPop: {
-    new (): PaystackPopInstance;
-    prototype: PaystackPopInstance;
-  } | undefined;
+  class PaystackPop implements PaystackPopInstance {
+    constructor();
+    newTransaction(options: PaystackOptions): void;
+  }
 
   export default PaystackPop;
 }

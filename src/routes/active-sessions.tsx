@@ -58,7 +58,8 @@ export function ActiveSessionsPage() {
 
       // Add markers for sessions with location
       const bounds: [number, number][] = [];
-      sessions.forEach((s) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      sessions.forEach((s: any) => {
         if (s.latestLocation && mapInstanceRef.current) {
           const { latitude, longitude } = s.latestLocation;
           const marker = leafletModule.marker([latitude, longitude])
@@ -135,7 +136,8 @@ export function ActiveSessionsPage() {
 
             {/* Session list */}
             <div className="space-y-3">
-              {sessions.map((s) => {
+              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+              {sessions.map((s: any) => {
                 const elapsed = now - s.startedAt;
                 const charge = calculateCharge(elapsed, s.rateAmount, s.rateUnit);
                 return (

@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as VehiclesRouteImport } from './routes/vehicles'
 import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as RegisterRouteImport } from './routes/register'
+import { Route as PayCallbackRouteImport } from './routes/pay-callback'
 import { Route as OauthSuccessRouteImport } from './routes/oauth-success'
 import { Route as MyVehiclesRouteImport } from './routes/my-vehicles'
 import { Route as ManageUsersRouteImport } from './routes/manage-users'
@@ -44,6 +45,11 @@ const ReportsRoute = ReportsRouteImport.update({
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
   path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PayCallbackRoute = PayCallbackRouteImport.update({
+  id: '/pay-callback',
+  path: '/pay-callback',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OauthSuccessRoute = OauthSuccessRouteImport.update({
@@ -154,6 +160,7 @@ export interface FileRoutesByFullPath {
   '/manage-users': typeof ManageUsersRoute
   '/my-vehicles': typeof MyVehiclesRoute
   '/oauth-success': typeof OauthSuccessRoute
+  '/pay-callback': typeof PayCallbackRoute
   '/register': typeof RegisterRoute
   '/reports': typeof ReportsRoute
   '/vehicles': typeof VehiclesRoute
@@ -177,6 +184,7 @@ export interface FileRoutesByTo {
   '/manage-users': typeof ManageUsersRoute
   '/my-vehicles': typeof MyVehiclesRoute
   '/oauth-success': typeof OauthSuccessRoute
+  '/pay-callback': typeof PayCallbackRoute
   '/register': typeof RegisterRoute
   '/reports': typeof ReportsRoute
   '/vehicles': typeof VehiclesRoute
@@ -201,6 +209,7 @@ export interface FileRoutesById {
   '/manage-users': typeof ManageUsersRoute
   '/my-vehicles': typeof MyVehiclesRoute
   '/oauth-success': typeof OauthSuccessRoute
+  '/pay-callback': typeof PayCallbackRoute
   '/register': typeof RegisterRoute
   '/reports': typeof ReportsRoute
   '/vehicles': typeof VehiclesRoute
@@ -226,6 +235,7 @@ export interface FileRouteTypes {
     | '/manage-users'
     | '/my-vehicles'
     | '/oauth-success'
+    | '/pay-callback'
     | '/register'
     | '/reports'
     | '/vehicles'
@@ -249,6 +259,7 @@ export interface FileRouteTypes {
     | '/manage-users'
     | '/my-vehicles'
     | '/oauth-success'
+    | '/pay-callback'
     | '/register'
     | '/reports'
     | '/vehicles'
@@ -272,6 +283,7 @@ export interface FileRouteTypes {
     | '/manage-users'
     | '/my-vehicles'
     | '/oauth-success'
+    | '/pay-callback'
     | '/register'
     | '/reports'
     | '/vehicles'
@@ -296,6 +308,7 @@ export interface RootRouteChildren {
   ManageUsersRoute: typeof ManageUsersRoute
   MyVehiclesRoute: typeof MyVehiclesRoute
   OauthSuccessRoute: typeof OauthSuccessRoute
+  PayCallbackRoute: typeof PayCallbackRoute
   RegisterRoute: typeof RegisterRoute
   ReportsRoute: typeof ReportsRoute
   VehiclesRoute: typeof VehiclesRoute
@@ -324,6 +337,13 @@ declare module '@tanstack/react-router' {
       path: '/register'
       fullPath: '/register'
       preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pay-callback': {
+      id: '/pay-callback'
+      path: '/pay-callback'
+      fullPath: '/pay-callback'
+      preLoaderRoute: typeof PayCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/oauth-success': {
@@ -472,6 +492,7 @@ const rootRouteChildren: RootRouteChildren = {
   ManageUsersRoute: ManageUsersRoute,
   MyVehiclesRoute: MyVehiclesRoute,
   OauthSuccessRoute: OauthSuccessRoute,
+  PayCallbackRoute: PayCallbackRoute,
   RegisterRoute: RegisterRoute,
   ReportsRoute: ReportsRoute,
   VehiclesRoute: VehiclesRoute,

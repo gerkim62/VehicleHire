@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "../hooks/useAuth";
-import { useQuery, useMutation } from "convex/react";
+import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import type { Id } from "../../convex/_generated/dataModel";
 import { Sidebar } from "../components/layout/Sidebar";
@@ -9,10 +9,10 @@ import { Badge, Spinner } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
 import { useTimer } from "../hooks/useTimer";
 import { useGeolocation } from "../hooks/useGeolocation";
-import { usePaystack } from "../hooks/usePaystack";
+import { usePaystackRedirect } from "../hooks/usePaystackRedirect";
 import { useToast } from "../hooks/useToast";
-import { formatDuration, formatCurrency, calculateCharge, generateReference, getErrorMessage } from "../lib/utils";
-import { Timer, DollarSign, Car, MapPin, CreditCard, CheckCircle } from "lucide-react";
+import { formatDuration, formatCurrency, calculateCharge } from "../lib/utils";
+import { Timer, DollarSign, Car, MapPin, CreditCard, CheckCircle, Loader2 } from "lucide-react";
 import { useEffect, useRef } from "react";
 import type L from "leaflet";
 
@@ -25,7 +25,7 @@ export function SessionPage() {
   const { user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { pay } = usePaystack();
+  const { initiatePayment, loading: payLoading, error: payError } = usePaystackRedirect();
 
   const session = useQuery(api.sessions.getById, {
     sessionId: sessionId as Id<"sessions">,
@@ -35,10 +35,6 @@ export function SessionPage() {
     api.payments.getBySession,
     session ? { sessionId: session._id } : "skip"
   );
-
-  const createPayment = useMutation(api.payments.create);
-  const markPaymentSuccess = useMutation(api.payments.markSuccess);
-  const markPaymentFailed = useMutation(api.payments.markFailed);
 
   const elapsed = useTimer(session?.status === "in_progress" ? session.startedAt : null);
 
@@ -84,48 +80,21 @@ export function SessionPage() {
     loadMap();
   }, [session?.latestLocation]);
 
+  // Show any payment error via toast
+  useEffect(() => {
+    if (payError) toast("Payment initiation failed: " + payError, "error");
+  }, [payError, toast]);
+
   const handlePay = async () => {
     if (!user || !session?.totalCharge) return;
-    const ref = generateReference();
-
-    try {
-      await createPayment({
-        sessionId: session._id,
-        clientId: user._id,
-        agentId: session.agentId,
-        amount: session.totalCharge,
-        currency: "KES",
-        paystackReference: ref,
-      });
-
-      pay({
-        email: user.email,
-        amount: session.totalCharge * 100, // in cents
-        currency: "KES",
-        reference: ref,
-        onSuccess: async (response) => {
-          try {
-            await markPaymentSuccess({
-              paystackReference: response.reference,
-              paystackTransactionId: response.trans,
-            });
-            toast(`Payment of ${formatCurrency(session.totalCharge!)} confirmed!`, "success");
-          } catch {
-            toast("Payment confirmed but record update failed. Contact support.", "error");
-          }
-        },
-        onClose: async () => {
-          try {
-            await markPaymentFailed({ paystackReference: ref });
-          } catch (e) {
-            console.error("Failed to cancel payment record:", e);
-          }
-          toast("Payment was cancelled.", "warning");
-        },
-      });
-    } catch (err) {
-      toast("Failed to initiate payment: " + getErrorMessage(err), "error");
-    }
+    await initiatePayment({
+      sessionId: session._id,
+      clientId: user._id,
+      agentId: session.agentId,
+      email: user.email,
+      amount: session.totalCharge, // in KES whole units
+      currency: session.currency || "KES",
+    });
   };
 
   if (authLoading) return <div className="flex items-center justify-center min-h-[60vh]"><Spinner className="w-8 h-8" /></div>;
@@ -269,16 +238,39 @@ export function SessionPage() {
               {/* Payment action */}
               <div className="mt-6">
                 {isPaid ? (
-                  <div className="flex items-center justify-center gap-2 text-success-600 font-medium">
-                    <CheckCircle className="w-5 h-5" />
-                    Payment confirmed
+                  <div className="bg-success-50 border border-success-200 rounded-xl p-4 max-w-md mx-auto text-left">
+                    <div className="flex items-center gap-2 text-success-700 font-semibold mb-2">
+                      <CheckCircle className="w-5 h-5 text-success-600" />
+                      Payment Verified & Completed
+                    </div>
+                    <div className="space-y-1 text-xs text-surface-600 font-mono">
+                      <p><span className="text-surface-400 font-sans">Reference:</span> {payment.paystackReference}</p>
+                      {payment.paystackTransactionId && (
+                        <p><span className="text-surface-400 font-sans">Transaction ID:</span> {payment.paystackTransactionId}</p>
+                      )}
+                      {payment.paidAt && (
+                        <p><span className="text-surface-400 font-sans">Paid At:</span> {new Date(payment.paidAt).toLocaleString()}</p>
+                      )}
+                    </div>
                   </div>
                 ) : user.role === "client" ? (
-                  <Button onClick={handlePay} size="lg" className="w-full sm:w-auto">
-                    <CreditCard className="w-4 h-4" />
-                    Pay {formatCurrency(session.totalCharge)} via Paystack
+                  <Button
+                    onClick={handlePay}
+                    size="lg"
+                    className="w-full sm:w-auto"
+                    isLoading={payLoading}
+                    disabled={payLoading}
+                    id="session-pay-btn"
+                  >
+                    {payLoading ? (
+                      <><Loader2 className="w-4 h-4 animate-spin" /> Redirecting to Paystack…</>
+                    ) : (
+                      <><CreditCard className="w-4 h-4" /> Pay {formatCurrency(session.totalCharge)} via Paystack</>
+                    )}
                   </Button>
-                ) : null}
+                ) : (
+                  <Badge variant="warning" size="md">Payment Pending from Client</Badge>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -287,3 +279,4 @@ export function SessionPage() {
     </div>
   );
 }
+

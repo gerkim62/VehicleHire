@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "../hooks/useAuth";
-import { useQuery, useMutation } from "convex/react";
+import { useQuery, useMutation, useAction } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { Sidebar } from "../components/layout/Sidebar";
 import { Card, CardContent } from "../components/ui/Card";
@@ -32,6 +32,7 @@ export function HistoryPage() {
   const createPayment = useMutation(api.payments.create);
   const markPaymentSuccess = useMutation(api.payments.markSuccess);
   const markPaymentFailed = useMutation(api.payments.markFailed);
+  const sendPaymentReceipt = useAction(api.emails.sendPaymentReceipt);
   const submitReview = useMutation(api.reviews.submit);
 
   const [reviewModal, setReviewModal] = useState<string | null>(null);
@@ -76,6 +77,26 @@ export function HistoryPage() {
               paystackTransactionId: response.trans,
             });
             toast(`Payment of ${formatCurrency(session.totalCharge!)} confirmed! ✓`, "success");
+
+            // Send receipt email
+            try {
+              await sendPaymentReceipt({
+                clientEmail: user.email,
+                clientName: user.name,
+                vehicleName: session.vehicle
+                  ? `${session.vehicle.make} ${session.vehicle.model}`
+                  : "Hire Vehicle",
+                amount: session.totalCharge!,
+                currency: session.currency || "KES",
+                reference: response.reference,
+                paidAt: new Date().toLocaleString("en-KE", {
+                  dateStyle: "medium",
+                  timeStyle: "short",
+                }),
+              });
+            } catch (e) {
+              console.info("Receipt email skipped (SMTP not configured):", e);
+            }
           } catch {
             toast("Payment was received but confirmation failed. Contact support.", "error");
           } finally {
@@ -98,6 +119,7 @@ export function HistoryPage() {
       setPayingSession(null);
     }
   };
+
 
   const handleReview = async (sessionId: string) => {
     if (!user) return;
