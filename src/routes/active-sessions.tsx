@@ -66,6 +66,7 @@ export function ActiveSessionsPage() {
             .addTo(mapInstanceRef.current!)
             .bindPopup(`
               <strong>${s.vehicle?.make} ${s.vehicle?.model}</strong><br/>
+              <span style="font-size:11px;color:#059669;font-weight:600;">Last Location</span><br/>
               Client: ${s.client?.name}<br/>
               Accuracy: ±${Math.round(s.latestLocation.accuracy)}m
             `);
