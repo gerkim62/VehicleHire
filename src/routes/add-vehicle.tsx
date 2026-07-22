@@ -114,7 +114,7 @@ export function AddVehiclePage() {
   return (
     <div className="flex flex-col md:flex-row min-h-[calc(100vh-4rem)]">
       <Sidebar />
-      <main className="flex-1 p-6 lg:p-8 max-w-2xl">
+      <main className="flex-1 min-w-0 p-6 lg:p-8 w-full max-w-4xl pb-20 md:pb-8">
         <button
           onClick={() => navigate({ to: "/my-vehicles" })}
           className="flex items-center gap-1 text-sm text-surface-500 hover:text-surface-700 mb-4 cursor-pointer"
