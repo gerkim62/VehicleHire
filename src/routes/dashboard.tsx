@@ -17,6 +17,11 @@ import {
   ArrowRight,
   Shield,
   ChevronRight,
+  Activity,
+  CheckCircle2,
+  ShieldCheck,
+  ShieldAlert,
+  CreditCard,
 } from "lucide-react";
 import { formatCurrency, formatRelativeTime } from "../lib/utils";
 import { PendingAgentDashboard } from "../components/dashboard/PendingAgentDashboard";
@@ -286,31 +291,111 @@ function AdminDashboard() {
         <StatCard title="Total Revenue" value={formatCurrency(stats.totalRevenue)} icon={<TrendingUp className="w-5 h-5" />} color="accent" />
       </div>
 
-      <div className="grid sm:grid-cols-2 gap-4">
-        <Card>
-          <CardContent>
-            <h3 className="font-semibold mb-2">Platform Overview</h3>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between"><span className="text-surface-500">Total Vehicles</span><span className="font-medium">{stats.totalVehicles}</span></div>
-              <div className="flex justify-between"><span className="text-surface-500">Available Vehicles</span><span className="font-medium">{stats.activeVehicles}</span></div>
-              <div className="flex justify-between"><span className="text-surface-500">Completed Sessions</span><span className="font-medium">{stats.completedSessions}</span></div>
-              <div className="flex justify-between"><span className="text-surface-500">Total Payments</span><span className="font-medium">{stats.totalPayments}</span></div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <Card className="h-full">
+          <CardContent className="flex flex-col justify-between h-full space-y-4">
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-semibold text-surface-900 flex items-center gap-2 text-base">
+                  <Activity className="w-4 h-4 text-primary-600" />
+                  Platform Overview
+                </h3>
+                <Badge variant="default" size="sm">System Metrics</Badge>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-3 pt-1">
+                <div className="p-3 rounded-xl bg-surface-50 border border-surface-100/60 flex items-center justify-between">
+                  <div>
+                    <p className="text-xs text-surface-500 font-medium">Total Vehicles</p>
+                    <p className="text-lg font-bold text-surface-900 mt-0.5">{stats.totalVehicles}</p>
+                  </div>
+                  <div className="w-8 h-8 rounded-lg bg-primary-50 text-primary-600 flex items-center justify-center shrink-0">
+                    <Car className="w-4 h-4" />
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-xl bg-surface-50 border border-surface-100/60 flex items-center justify-between">
+                  <div>
+                    <p className="text-xs text-surface-500 font-medium">Available Fleet</p>
+                    <p className="text-lg font-bold text-surface-900 mt-0.5">{stats.activeVehicles}</p>
+                  </div>
+                  <div className="w-8 h-8 rounded-lg bg-success-50 text-success-600 flex items-center justify-center shrink-0">
+                    <CheckCircle2 className="w-4 h-4" />
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-xl bg-surface-50 border border-surface-100/60 flex items-center justify-between">
+                  <div>
+                    <p className="text-xs text-surface-500 font-medium">Completed Hires</p>
+                    <p className="text-lg font-bold text-surface-900 mt-0.5">{stats.completedSessions}</p>
+                  </div>
+                  <div className="w-8 h-8 rounded-lg bg-warning-50 text-warning-600 flex items-center justify-center shrink-0">
+                    <CalendarCheck className="w-4 h-4" />
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-xl bg-surface-50 border border-surface-100/60 flex items-center justify-between">
+                  <div>
+                    <p className="text-xs text-surface-500 font-medium">Total Payments</p>
+                    <p className="text-lg font-bold text-surface-900 mt-0.5">{stats.totalPayments}</p>
+                  </div>
+                  <div className="w-8 h-8 rounded-lg bg-accent-50 text-accent-600 flex items-center justify-center shrink-0">
+                    <CreditCard className="w-4 h-4" />
+                  </div>
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        {stats.pendingAgents > 0 && (
-          <Card className="border-warning-200">
-            <CardContent>
-              <h3 className="font-semibold mb-2 text-warning-700">Pending Approvals</h3>
-              <p className="text-sm text-surface-500 mb-3">
-                {stats.pendingAgents} agent{stats.pendingAgents > 1 ? "s" : ""} awaiting review.
-              </p>
-              <Link to="/manage-agents">
-                <Button size="sm" variant="outline">
-                  Review Now <ArrowRight className="w-4 h-4" />
-                </Button>
-              </Link>
+        {stats.pendingAgents > 0 ? (
+          <Card className="border-warning-200 bg-warning-50/20 h-full">
+            <CardContent className="flex flex-col justify-between h-full">
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-semibold text-warning-900 flex items-center gap-2 text-base">
+                    <ShieldAlert className="w-4.5 h-4.5 text-warning-600" />
+                    Pending Agent Approvals
+                  </h3>
+                  <Badge variant="warning" dot>Action Required</Badge>
+                </div>
+                <p className="text-sm text-surface-600 leading-relaxed mb-4">
+                  There {stats.pendingAgents === 1 ? "is" : "are"}{" "}
+                  <span className="font-semibold text-surface-900">{stats.pendingAgents} agent application{stats.pendingAgents > 1 ? "s" : ""}</span>{" "}
+                  awaiting admin verification and document review before accessing agent features.
+                </p>
+              </div>
+              <div className="pt-2">
+                <Link to="/manage-agents">
+                  <Button size="sm" className="w-full sm:w-auto">
+                    Review Applications <ArrowRight className="w-4 h-4 ml-1" />
+                  </Button>
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card className="h-full">
+            <CardContent className="flex flex-col justify-between h-full">
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-semibold text-surface-900 flex items-center gap-2 text-base">
+                    <ShieldCheck className="w-4.5 h-4.5 text-success-600" />
+                    Agent Verification Status
+                  </h3>
+                  <Badge variant="success" dot>All Verified</Badge>
+                </div>
+                <p className="text-sm text-surface-500 leading-relaxed mb-4">
+                  All registered agent applications have been reviewed and approved. Platform agent verification is fully up to date.
+                </p>
+              </div>
+              <div className="pt-2">
+                <Link to="/manage-agents">
+                  <Button size="sm" variant="outline" className="w-full sm:w-auto">
+                    Manage Agents <ArrowRight className="w-4 h-4 ml-1" />
+                  </Button>
+                </Link>
+              </div>
             </CardContent>
           </Card>
         )}
