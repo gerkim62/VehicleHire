@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "../hooks/useAuth";
-import { useQuery } from "convex/react";
+import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { Sidebar } from "../components/layout/Sidebar";
 import { Card, CardContent } from "../components/ui/Card";
@@ -8,8 +8,9 @@ import { Badge, Spinner } from "../components/ui/Badge";
 import { Input } from "../components/ui/Input";
 import { useState } from "react";
 import { Search } from "lucide-react";
-import { formatDate } from "../lib/utils";
+import { formatDate, getErrorMessage } from "../lib/utils";
 import type { User } from "../lib/types";
+import { useToast } from "../hooks/useToast";
 
 export const Route = createFileRoute("/manage-users")({
   component: ManageUsersPage,
@@ -19,6 +20,8 @@ export function ManageUsersPage() {
   const { user, isLoading } = useAuth();
   const navigate = useNavigate();
   const allUsers = useQuery(api.users.getAllUsers);
+  const updateStatus = useMutation(api.users.updateAgentStatus);
+  const { error: toastError, success: toastSuccess } = useToast();
   const [search, setSearch] = useState("");
 
   if (isLoading) return <div className="flex items-center justify-center min-h-[60vh]"><Spinner className="w-8 h-8" /></div>;
@@ -79,9 +82,31 @@ export function ManageUsersPage() {
                         </td>
                         <td className="py-3 px-4">
                           {u.role === "agent" ? (
-                            <Badge variant={u.agentStatus === "approved" ? "success" : u.agentStatus === "rejected" ? "danger" : "warning"} dot>
-                              {u.agentStatus || "—"}
-                            </Badge>
+                            <select
+                              value={u.agentStatus || "pending"}
+                              onChange={async (e) => {
+                                try {
+                                  await updateStatus({
+                                    userId: u._id,
+                                    status: e.target.value as "approved" | "rejected" | "pending",
+                                  });
+                                  toastSuccess(`Updated ${u.name}'s status to ${e.target.value}`);
+                                } catch (err) {
+                                  toastError(getErrorMessage(err));
+                                }
+                              }}
+                              className={`text-xs font-semibold px-2.5 py-1 rounded-lg border transition-colors cursor-pointer ${
+                                u.agentStatus === "approved"
+                                  ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100"
+                                  : u.agentStatus === "rejected"
+                                    ? "bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100"
+                                    : "bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100"
+                              }`}
+                            >
+                              <option value="pending">Pending</option>
+                              <option value="approved">Approved</option>
+                              <option value="rejected">Rejected</option>
+                            </select>
                           ) : (
                             <Badge variant="success">Active</Badge>
                           )}
