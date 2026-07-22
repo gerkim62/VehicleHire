@@ -6,7 +6,7 @@ import { Sidebar } from "../components/layout/Sidebar";
 import { Card, CardContent } from "../components/ui/Card";
 import { Spinner, StarDisplay, EmptyState } from "../components/ui/Badge";
 import { Input } from "../components/ui/Input";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Car, Search, Users as UsersIcon, Clock, Sparkles, ArrowRight, ShieldCheck } from "lucide-react";
 import { formatCurrency } from "../lib/utils";
 import type { Vehicle } from "../lib/types";
@@ -22,9 +22,6 @@ export function VehiclesPage() {
   const [search, setSearch] = useState("");
   const [capacityFilter, setCapacityFilter] = useState<"all" | "4" | "5+">("all");
   const [sortBy, setSortBy] = useState<"rating" | "price_asc" | "price_desc">("rating");
-
-  if (isLoading) return <div className="flex items-center justify-center min-h-[60vh]"><Spinner className="w-8 h-8" /></div>;
-  if (!user) { navigate({ to: "/login" }); return null; }
 
   const filtered = useMemo(() => {
     if (!vehicles) return [];
@@ -48,11 +45,21 @@ export function VehiclesPage() {
       });
   }, [vehicles, search, capacityFilter, sortBy]);
 
-  const totalCount = vehicles?.length || 0;
   const avgRate = useMemo(() => {
     if (!vehicles || vehicles.length === 0) return 0;
     return Math.round(vehicles.reduce((acc, v) => acc + v.rateAmount, 0) / vehicles.length);
   }, [vehicles]);
+
+  useEffect(() => {
+    if (!isLoading && !user) {
+      navigate({ to: "/login" });
+    }
+  }, [isLoading, user, navigate]);
+
+  if (isLoading) return <div className="flex items-center justify-center min-h-[60vh]"><Spinner className="w-8 h-8" /></div>;
+  if (!user) return null;
+
+  const totalCount = vehicles?.length || 0;
 
   return (
     <div className="flex flex-col md:flex-row min-h-[calc(100vh-4rem)] bg-surface-50">

@@ -6,7 +6,7 @@ import { Sidebar } from "../components/layout/Sidebar";
 import { Card, CardContent } from "../components/ui/Card";
 import { Badge, Spinner, EmptyState } from "../components/ui/Badge";
 import { Input } from "../components/ui/Input";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Search, Users } from "lucide-react";
 import { formatDate, getErrorMessage } from "../lib/utils";
 import type { User as DBUser } from "../lib/types";
@@ -25,14 +25,6 @@ export function ManageUsersPage() {
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState<"all" | "client" | "agent" | "admin">("all");
 
-  if (isLoading) return <div className="flex items-center justify-center min-h-[60vh]"><Spinner className="w-8 h-8" /></div>;
-  if (!user || user.role !== "admin") { navigate({ to: "/login" }); return null; }
-
-  const totalCount = allUsers?.length || 0;
-  const clientCount = allUsers?.filter((u) => u.role === "client").length || 0;
-  const agentCount = allUsers?.filter((u) => u.role === "agent").length || 0;
-  const adminCount = allUsers?.filter((u) => u.role === "admin").length || 0;
-
   const filtered = useMemo(() => {
     if (!allUsers) return [];
     return allUsers.filter((u: DBUser) => {
@@ -43,6 +35,20 @@ export function ManageUsersPage() {
       return true;
     });
   }, [allUsers, search, roleFilter]);
+
+  useEffect(() => {
+    if (!isLoading && (!user || user.role !== "admin")) {
+      navigate({ to: "/login" });
+    }
+  }, [isLoading, user, navigate]);
+
+  if (isLoading) return <div className="flex items-center justify-center min-h-[60vh]"><Spinner className="w-8 h-8" /></div>;
+  if (!user || user.role !== "admin") return null;
+
+  const totalCount = allUsers?.length || 0;
+  const clientCount = allUsers?.filter((u) => u.role === "client").length || 0;
+  const agentCount = allUsers?.filter((u) => u.role === "agent").length || 0;
+  const adminCount = allUsers?.filter((u) => u.role === "admin").length || 0;
 
   return (
     <div className="flex flex-col md:flex-row min-h-[calc(100vh-4rem)] bg-surface-50">

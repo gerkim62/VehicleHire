@@ -10,7 +10,7 @@ import { Modal } from "../components/ui/Modal";
 import { Input, Textarea } from "../components/ui/Input";
 import { usePaystack } from "../hooks/usePaystack";
 import { useToast } from "../hooks/useToast";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { History as HistoryIcon, Star, CreditCard, CheckCircle, Clock, Car, ChevronRight, Search } from "lucide-react";
 import { formatCurrency, formatDuration, formatDate, generateReference, getErrorMessage } from "../lib/utils";
 import type { Id } from "../../convex/_generated/dataModel";
@@ -42,9 +42,6 @@ export function HistoryPage() {
   const [submitting, setSubmitting] = useState(false);
   const [payingSession, setPayingSession] = useState<string | null>(null);
 
-  if (isLoading) return <div className="flex items-center justify-center min-h-[60vh]"><Spinner className="w-8 h-8" /></div>;
-  if (!user) { navigate({ to: "/login" }); return null; }
-
   const completedSessions = useMemo(() => {
     return sessions?.filter((s: EnrichedSession) => s.status === "completed") || [];
   }, [sessions]);
@@ -60,6 +57,15 @@ export function HistoryPage() {
       return makeModel.includes(q);
     });
   }, [completedSessions, search]);
+
+  useEffect(() => {
+    if (!isLoading && !user) {
+      navigate({ to: "/login" });
+    }
+  }, [isLoading, user, navigate]);
+
+  if (isLoading) return <div className="flex items-center justify-center min-h-[60vh]"><Spinner className="w-8 h-8" /></div>;
+  if (!user) return null;
 
   const handlePay = async (session: EnrichedSession) => {
     if (!user || !session.totalCharge) return;

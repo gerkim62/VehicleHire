@@ -6,7 +6,7 @@ import { Sidebar } from "../components/layout/Sidebar";
 import { Card, CardContent } from "../components/ui/Card";
 import { Badge, Spinner, StarDisplay, EmptyState } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Car, Plus, Eye, EyeOff, ShieldAlert } from "lucide-react";
 import { formatCurrency } from "../lib/utils";
 import type { Vehicle } from "../lib/types";
@@ -23,8 +23,22 @@ export function MyVehiclesPage() {
 
   const [filter, setFilter] = useState<"all" | "available" | "hired" | "inactive">("all");
 
+  const filtered = useMemo(() => {
+    if (!vehicles) return [];
+    if (filter === "available") return vehicles.filter((v) => v.isActive && v.isAvailable);
+    if (filter === "hired") return vehicles.filter((v) => v.isActive && !v.isAvailable);
+    if (filter === "inactive") return vehicles.filter((v) => !v.isActive);
+    return vehicles;
+  }, [vehicles, filter]);
+
+  useEffect(() => {
+    if (!isLoading && (!user || user.role !== "agent")) {
+      navigate({ to: "/login" });
+    }
+  }, [isLoading, user, navigate]);
+
   if (isLoading) return <div className="flex items-center justify-center min-h-[60vh]"><Spinner className="w-8 h-8" /></div>;
-  if (!user || user.role !== "agent") { navigate({ to: "/login" }); return null; }
+  if (!user || user.role !== "agent") return null;
 
   if (user.agentStatus !== "approved") {
     return (
@@ -56,14 +70,6 @@ export function MyVehiclesPage() {
   const totalCount = vehicles?.length || 0;
   const availableCount = vehicles?.filter((v) => v.isActive && v.isAvailable).length || 0;
   const hiredCount = vehicles?.filter((v) => v.isActive && !v.isAvailable).length || 0;
-
-  const filtered = useMemo(() => {
-    if (!vehicles) return [];
-    if (filter === "available") return vehicles.filter((v) => v.isActive && v.isAvailable);
-    if (filter === "hired") return vehicles.filter((v) => v.isActive && !v.isAvailable);
-    if (filter === "inactive") return vehicles.filter((v) => !v.isActive);
-    return vehicles;
-  }, [vehicles, filter]);
 
   return (
     <div className="flex flex-col md:flex-row min-h-[calc(100vh-4rem)] bg-surface-50">
