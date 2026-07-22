@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useAuth } from "../../hooks/useAuth";
-import { getErrorMessage } from "../../lib/utils";
+import { getErrorMessage, parseJwt } from "../../lib/utils";
 
 declare global {
   interface Window {
@@ -43,44 +43,56 @@ interface Props {
   role: "client" | "agent";
   onSuccess?: () => void;
   onError?: (err: string) => void;
+  /** If true, shows a button link for full Google login page redirect */
+  showRedirectOption?: boolean;
 }
 
-/** Parse a Google ID token JWT (payload only — client-side, no verification) */
-function parseJwt(token: string): {
-  sub: string;
-  email: string;
-  name: string;
-  picture?: string;
-} {
-  const base64Url = token.split(".")[1];
-  const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-  const jsonPayload = decodeURIComponent(
-    atob(base64)
-      .split("")
-      .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-      .join("")
-  );
-  return JSON.parse(jsonPayload);
+/**
+ * Initiates standard Google OAuth 2.0 full-page redirect flow.
+ * Redirects the user's browser directly to accounts.google.com and returns
+ * to /oauth-success with an ID token.
+ */
+export function initiateGoogleOAuthRedirect(role: "client" | "agent" = "client") {
+  const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+  if (!clientId) {
+    throw new Error(
+      "Google Client ID not configured. Add VITE_GOOGLE_CLIENT_ID to .env.local"
+    );
+  }
+
+  const redirectUri = `${window.location.origin}/oauth-success`;
+  const nonce = Math.random().toString(36).substring(2) + Date.now().toString(36);
+
+  const targetUrl = new URL("https://accounts.google.com/o/oauth2/v2/auth");
+  targetUrl.searchParams.set("client_id", clientId);
+  targetUrl.searchParams.set("redirect_uri", redirectUri);
+  targetUrl.searchParams.set("response_type", "id_token");
+  targetUrl.searchParams.set("scope", "openid email profile");
+  targetUrl.searchParams.set("nonce", nonce);
+  targetUrl.searchParams.set("state", role);
+  targetUrl.searchParams.set("prompt", "select_account");
+
+  window.location.href = targetUrl.toString();
 }
 
 /**
  * Google Sign-In button component.
  *
- * Uses Google Identity Services `renderButton()` to display a native
- * Google-branded button. This is more reliable than `prompt()` (One Tap),
- * which can be silently suppressed by the browser or by Google's cooldown
- * after a user dismisses it.
- *
- * Falls back to a styled custom button if the GSI script or client ID
- * is unavailable.
+ * Supports both Google Identity Services (OneTap / embedded renderButton) and
+ * direct standard OAuth redirect to accounts.google.com.
  */
-export function GoogleSignInButton({ role, onSuccess, onError }: Props) {
+export function GoogleSignInButton({
+  role,
+  onSuccess,
+  onError,
+  showRedirectOption = true,
+}: Props) {
   const { loginWithGoogle } = useAuth();
   const [loading, setLoading] = useState(false);
   const [gsiReady, setGsiReady] = useState(() => !!window.google?.accounts?.id);
   const [renderFailed, setRenderFailed] = useState(false);
   const buttonContainerRef = useRef<HTMLDivElement>(null);
-  // Use a ref to always have access to the latest role without re-initializing GSI
+  
   const roleRef = useRef(role);
   roleRef.current = role;
 
@@ -108,7 +120,7 @@ export function GoogleSignInButton({ role, onSuccess, onError }: Props) {
     [loginWithGoogle, onSuccess, onError]
   );
 
-  // Wait for the GSI script to finish loading if it hasn't yet
+  // Check for GSI script readiness
   useEffect(() => {
     if (gsiReady) return;
 
@@ -119,7 +131,6 @@ export function GoogleSignInButton({ role, onSuccess, onError }: Props) {
       }
     }, 100);
 
-    // Give up after 10 seconds
     const timeout = setTimeout(() => clearInterval(checkInterval), 10_000);
 
     return () => {
@@ -128,7 +139,7 @@ export function GoogleSignInButton({ role, onSuccess, onError }: Props) {
     };
   }, [gsiReady]);
 
-  // Initialize GSI and render the native Google button once the script is ready
+  // Render native GSI button when script is ready
   useEffect(() => {
     if (!gsiReady || !clientId || !window.google?.accounts?.id) return;
 
@@ -142,9 +153,7 @@ export function GoogleSignInButton({ role, onSuccess, onError }: Props) {
         cancel_on_tap_outside: true,
       });
 
-      // Render the native Google button into our container
       if (buttonContainerRef.current) {
-        // Clear any previous render
         buttonContainerRef.current.innerHTML = "";
 
         window.google.accounts.id.renderButton(buttonContainerRef.current, {
@@ -158,69 +167,23 @@ export function GoogleSignInButton({ role, onSuccess, onError }: Props) {
         });
       }
     } catch {
-      // renderButton can fail in certain environments; fall back to custom button
       setRenderFailed(true);
     }
   }, [gsiReady, clientId, handleCredentialResponse]);
 
-  // Fallback click handler — uses prompt() as a last resort
-  const handleFallbackClick = () => {
-    if (!clientId) {
-      onError?.(
-        "Google Client ID not configured. Add VITE_GOOGLE_CLIENT_ID to .env.local (see SETUP.md §2b)"
-      );
-      return;
+  const handleRedirectClick = () => {
+    try {
+      initiateGoogleOAuthRedirect(role);
+    } catch (err) {
+      onError?.(getErrorMessage(err));
     }
-
-    if (!gsiReady || !window.google?.accounts?.id) {
-      onError?.(
-        "Google Identity Services not loaded. Check your internet connection and try again."
-      );
-      return;
-    }
-
-    // Re-initialize and trigger prompt
-    window.google.accounts.id.initialize({
-      client_id: clientId,
-      callback: (response) => {
-        handleCredentialResponse(response.credential);
-      },
-      auto_select: false,
-      cancel_on_tap_outside: true,
-    });
-
-    window.google.accounts.id.prompt((notification) => {
-      if (notification.isNotDisplayed()) {
-        const reason = notification.getNotDisplayedReason();
-        if (reason === "suppressed_by_user") {
-          onError?.(
-            "Google Sign-In was recently dismissed. Please wait a moment and try again, or clear your browser cookies for accounts.google.com."
-          );
-        } else if (reason === "opt_out_or_no_session") {
-          onError?.(
-            "No Google session found. Please sign in to your Google account in another tab first, then try again."
-          );
-        } else {
-          onError?.(
-            `Google Sign-In popup could not be displayed (${reason}). Please try again.`
-          );
-        }
-      } else if (notification.isSkippedMoment()) {
-        const reason = notification.getSkippedReason();
-        onError?.(
-          `Google Sign-In was skipped (${reason}). Please try again.`
-        );
-      }
-    });
   };
 
-  // If GSI is ready, client ID is set, and renderButton didn't fail,
-  // show the native Google button container
   const showNativeButton = gsiReady && clientId && !renderFailed;
 
   return (
-    <div className="google-signin-wrapper">
-      {/* Native Google-rendered button (hidden if not ready or failed) */}
+    <div className="google-signin-wrapper space-y-2">
+      {/* Native Google-rendered button */}
       <div
         ref={buttonContainerRef}
         id="google-signin-btn"
@@ -232,7 +195,7 @@ export function GoogleSignInButton({ role, onSuccess, onError }: Props) {
         }}
       />
 
-      {/* Loading overlay shown while processing credentials */}
+      {/* Loading indicator */}
       {loading && (
         <div className="flex items-center justify-center gap-3 px-4 py-3 rounded-xl border-2 border-surface-200 bg-white text-sm font-medium text-surface-700">
           <span className="w-5 h-5 border-2 border-surface-300 border-t-primary-600 rounded-full animate-spin" />
@@ -240,13 +203,12 @@ export function GoogleSignInButton({ role, onSuccess, onError }: Props) {
         </div>
       )}
 
-      {/* Fallback custom button — shown if GSI hasn't loaded, no client ID, or renderButton failed */}
+      {/* Fallback button if GSI is not loaded or failed */}
       {!showNativeButton && !loading && (
         <button
           type="button"
-          onClick={handleFallbackClick}
-          disabled={loading}
-          className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl border-2 border-surface-200 bg-white hover:border-surface-300 hover:bg-surface-50 transition-all text-sm font-medium text-surface-700 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+          onClick={handleRedirectClick}
+          className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl border-2 border-surface-200 bg-white hover:border-surface-300 hover:bg-surface-50 transition-all text-sm font-medium text-surface-700 cursor-pointer"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24">
             <path
@@ -268,6 +230,19 @@ export function GoogleSignInButton({ role, onSuccess, onError }: Props) {
           </svg>
           Continue with Google
         </button>
+      )}
+
+      {/* Alternative full page redirect option */}
+      {showRedirectOption && !loading && (
+        <div className="text-center pt-1">
+          <button
+            type="button"
+            onClick={handleRedirectClick}
+            className="text-xs text-surface-500 hover:text-primary-600 underline cursor-pointer transition-colors"
+          >
+            Or sign in via Google login page (Redirect)
+          </button>
+        </div>
       )}
     </div>
   );
