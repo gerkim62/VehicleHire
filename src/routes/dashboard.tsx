@@ -18,6 +18,8 @@ import {
   Shield,
 } from "lucide-react";
 import { formatCurrency, formatRelativeTime } from "../lib/utils";
+import { PendingAgentDashboard } from "../components/dashboard/PendingAgentDashboard";
+import { RejectedAgentDashboard } from "../components/dashboard/RejectedAgentDashboard";
 import type { Booking, Vehicle, Session, User as DBUser } from "../lib/types";
 
 export const Route = createFileRoute("/dashboard")({
@@ -58,32 +60,10 @@ export function DashboardPage() {
           </p>
         </div>
 
-        {user.role === "agent" && user.agentStatus === "pending" && (
-          <div className="mb-6 p-4 rounded-2xl bg-warning-50 border border-warning-500/20">
-            <div className="flex items-center gap-3">
-              <Shield className="w-5 h-5 text-warning-600" />
-              <div>
-                <p className="font-semibold text-warning-700">Account Pending Approval</p>
-                <p className="text-sm text-warning-600">Your agent account is awaiting administrator approval. You'll be able to list vehicles once approved.</p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {user.role === "agent" && user.agentStatus === "rejected" && (
-          <div className="mb-6 p-4 rounded-2xl bg-danger-50 border border-danger-500/20">
-            <div className="flex items-center gap-3">
-              <Shield className="w-5 h-5 text-danger-600" />
-              <div>
-                <p className="font-semibold text-danger-700">Account Rejected</p>
-                <p className="text-sm text-danger-600">Your agent registration was not approved. Please contact the administrator.</p>
-              </div>
-            </div>
-          </div>
-        )}
-
         {user.role === "client" && <ClientDashboard />}
         {user.role === "agent" && user.agentStatus === "approved" && <AgentDashboard />}
+        {user.role === "agent" && user.agentStatus === "pending" && <PendingAgentDashboard user={user} />}
+        {user.role === "agent" && user.agentStatus === "rejected" && <RejectedAgentDashboard user={user} />}
         {user.role === "admin" && <AdminDashboard />}
       </main>
     </div>
