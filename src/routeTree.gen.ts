@@ -18,6 +18,7 @@ import { Route as MyVehiclesRouteImport } from './routes/my-vehicles'
 import { Route as ManageUsersRouteImport } from './routes/manage-users'
 import { Route as ManageAgentsRouteImport } from './routes/manage-agents'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as IncidentsRouteImport } from './routes/incidents'
 import { Route as HistoryRouteImport } from './routes/history'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as BookingsRouteImport } from './routes/bookings'
@@ -76,6 +77,11 @@ const ManageAgentsRoute = ManageAgentsRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IncidentsRoute = IncidentsRouteImport.update({
+  id: '/incidents',
+  path: '/incidents',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HistoryRoute = HistoryRouteImport.update({
@@ -161,6 +167,7 @@ export interface FileRoutesByFullPath {
   '/bookings': typeof BookingsRoute
   '/dashboard': typeof DashboardRoute
   '/history': typeof HistoryRoute
+  '/incidents': typeof IncidentsRoute
   '/login': typeof LoginRoute
   '/manage-agents': typeof ManageAgentsRoute
   '/manage-users': typeof ManageUsersRoute
@@ -186,6 +193,7 @@ export interface FileRoutesByTo {
   '/bookings': typeof BookingsRoute
   '/dashboard': typeof DashboardRoute
   '/history': typeof HistoryRoute
+  '/incidents': typeof IncidentsRoute
   '/login': typeof LoginRoute
   '/manage-agents': typeof ManageAgentsRoute
   '/manage-users': typeof ManageUsersRoute
@@ -212,6 +220,7 @@ export interface FileRoutesById {
   '/bookings': typeof BookingsRoute
   '/dashboard': typeof DashboardRoute
   '/history': typeof HistoryRoute
+  '/incidents': typeof IncidentsRoute
   '/login': typeof LoginRoute
   '/manage-agents': typeof ManageAgentsRoute
   '/manage-users': typeof ManageUsersRoute
@@ -239,6 +248,7 @@ export interface FileRouteTypes {
     | '/bookings'
     | '/dashboard'
     | '/history'
+    | '/incidents'
     | '/login'
     | '/manage-agents'
     | '/manage-users'
@@ -264,6 +274,7 @@ export interface FileRouteTypes {
     | '/bookings'
     | '/dashboard'
     | '/history'
+    | '/incidents'
     | '/login'
     | '/manage-agents'
     | '/manage-users'
@@ -289,6 +300,7 @@ export interface FileRouteTypes {
     | '/bookings'
     | '/dashboard'
     | '/history'
+    | '/incidents'
     | '/login'
     | '/manage-agents'
     | '/manage-users'
@@ -315,6 +327,7 @@ export interface RootRouteChildren {
   BookingsRoute: typeof BookingsRoute
   DashboardRoute: typeof DashboardRoute
   HistoryRoute: typeof HistoryRoute
+  IncidentsRoute: typeof IncidentsRoute
   LoginRoute: typeof LoginRoute
   ManageAgentsRoute: typeof ManageAgentsRoute
   ManageUsersRoute: typeof ManageUsersRoute
@@ -392,6 +405,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/incidents': {
+      id: '/incidents'
+      path: '/incidents'
+      fullPath: '/incidents'
+      preLoaderRoute: typeof IncidentsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/history': {
@@ -507,6 +527,7 @@ const rootRouteChildren: RootRouteChildren = {
   BookingsRoute: BookingsRoute,
   DashboardRoute: DashboardRoute,
   HistoryRoute: HistoryRoute,
+  IncidentsRoute: IncidentsRoute,
   LoginRoute: LoginRoute,
   ManageAgentsRoute: ManageAgentsRoute,
   ManageUsersRoute: ManageUsersRoute,
