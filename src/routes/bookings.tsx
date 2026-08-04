@@ -9,7 +9,7 @@ import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
 import { Modal } from "../components/ui/Modal";
 import { useToast } from "../hooks/useToast";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { CalendarCheck, Car, Clock, Eye, Search, Plus, User, XCircle, ChevronRight, MessageSquare } from "lucide-react";
 import { formatCurrency, formatRelativeTime, getErrorMessage } from "../lib/utils";
 
@@ -30,14 +30,6 @@ export function BookingsPage() {
   const [cancelModalId, setCancelModalId] = useState<string | null>(null);
   const [cancelling, setCancelling] = useState(false);
 
-  if (isLoading) return <div className="flex items-center justify-center min-h-[60vh]"><Spinner className="w-8 h-8" /></div>;
-  if (!user) { navigate({ to: "/login" }); return null; }
-
-  const totalCount = bookings?.length || 0;
-  const confirmedCount = bookings?.filter((b: any) => b.status === "confirmed").length || 0;
-  const pendingCount = bookings?.filter((b: any) => b.status === "pending").length || 0;
-  const cancelledCount = bookings?.filter((b: any) => b.status === "cancelled").length || 0;
-
   const filtered = useMemo(() => {
     if (!bookings) return [];
     return bookings.filter((b: any) => {
@@ -53,6 +45,20 @@ export function BookingsPage() {
       return true;
     });
   }, [bookings, search, filter]);
+
+  useEffect(() => {
+    if (!isLoading && !user) {
+      navigate({ to: "/login" });
+    }
+  }, [isLoading, user, navigate]);
+
+  if (isLoading) return <div className="flex items-center justify-center min-h-[60vh]"><Spinner className="w-8 h-8" /></div>;
+  if (!user) return null;
+
+  const totalCount = bookings?.length || 0;
+  const confirmedCount = bookings?.filter((b: any) => b.status === "confirmed").length || 0;
+  const pendingCount = bookings?.filter((b: any) => b.status === "pending").length || 0;
+  const cancelledCount = bookings?.filter((b: any) => b.status === "cancelled").length || 0;
 
   const handleCancelBooking = async (bookingId: string) => {
     setCancelling(true);

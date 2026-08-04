@@ -6,6 +6,8 @@ export type BookingStatus = "pending" | "confirmed" | "cancelled";
 export type SessionStatus = "in_progress" | "completed";
 export type PaymentStatus = "pending" | "success" | "failed";
 export type RateUnit = "hour" | "day";
+export type IncidentSeverity = "minor" | "moderate" | "major";
+export type IncidentStatus = "reported" | "reviewing" | "resolved";
 
 export interface User {
   _id: Id<"users">;
@@ -109,5 +111,25 @@ export interface Notification {
   message: string;
   isRead: boolean;
   relatedId?: string;
+  createdAt: number;
+}
+
+export interface Incident {
+  _id: Id<"incidents">;
+  sessionId: Id<"sessions">;
+  clientId: Id<"users">;
+  agentId: Id<"users">;
+  vehicleId: Id<"vehicles">;
+  title: string;
+  description: string;
+  severity: IncidentSeverity;
+  photos: string[];
+  location?: {
+    latitude: number;
+    longitude: number;
+  };
+  status: IncidentStatus;
+  resolutionNotes?: string;
+  resolvedAt?: number;
   createdAt: number;
 }

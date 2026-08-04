@@ -8,7 +8,7 @@ import { Badge, Spinner, EmptyState } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
 import { Modal } from "../components/ui/Modal";
 import { useToast } from "../hooks/useToast";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { CalendarCheck, Play, X as XIcon, Eye, ShieldAlert, Clock } from "lucide-react";
 import { formatRelativeTime, formatCurrency, getErrorMessage } from "../lib/utils";
 
@@ -28,8 +28,22 @@ export function AgentBookingsPage() {
   const [cancelConfirm, setCancelConfirm] = useState<string | null>(null);
   const [filter, setFilter] = useState<"all" | "pending" | "confirmed" | "cancelled">("all");
 
+  const filtered = useMemo(() => {
+    if (!bookings) return [];
+    if (filter === "pending") return bookings.filter((b: any) => b.status === "pending");
+    if (filter === "confirmed") return bookings.filter((b: any) => b.status === "confirmed");
+    if (filter === "cancelled") return bookings.filter((b: any) => b.status === "cancelled");
+    return bookings;
+  }, [bookings, filter]);
+
+  useEffect(() => {
+    if (!isLoading && (!user || user.role !== "agent")) {
+      navigate({ to: "/login" });
+    }
+  }, [isLoading, user, navigate]);
+
   if (isLoading) return <div className="flex items-center justify-center min-h-[60vh]"><Spinner className="w-8 h-8" /></div>;
-  if (!user || user.role !== "agent") { navigate({ to: "/login" }); return null; }
+  if (!user || user.role !== "agent") return null;
 
   if (user.agentStatus !== "approved") {
     return (
@@ -79,14 +93,6 @@ export function AgentBookingsPage() {
   const pendingCount = bookings?.filter((b: any) => b.status === "pending").length || 0;
   const confirmedCount = bookings?.filter((b: any) => b.status === "confirmed").length || 0;
   const cancelledCount = bookings?.filter((b: any) => b.status === "cancelled").length || 0;
-
-  const filtered = useMemo(() => {
-    if (!bookings) return [];
-    if (filter === "pending") return bookings.filter((b: any) => b.status === "pending");
-    if (filter === "confirmed") return bookings.filter((b: any) => b.status === "confirmed");
-    if (filter === "cancelled") return bookings.filter((b: any) => b.status === "cancelled");
-    return bookings;
-  }, [bookings, filter]);
 
   const cancelTarget = bookings?.find((b: any) => b._id === cancelConfirm);
 

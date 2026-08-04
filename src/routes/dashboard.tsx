@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useAuth } from "../hooks/useAuth";
 import { useQuery } from "convex/react";
@@ -36,6 +37,12 @@ export function DashboardPage() {
   const { user, isLoading } = useAuth();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (!isLoading && !user) {
+      navigate({ to: "/login" });
+    }
+  }, [isLoading, user, navigate]);
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
@@ -45,7 +52,6 @@ export function DashboardPage() {
   }
 
   if (!user) {
-    navigate({ to: "/login" });
     return null;
   }
 
