@@ -203,6 +203,26 @@ export const getAgentRevenue = query({
   },
 });
 
+// Get all payments (admin)
+export const getAll = query({
+  handler: async (ctx) => {
+    const payments = await ctx.db
+      .query("payments")
+      .order("desc")
+      .collect();
+
+    return await Promise.all(
+      payments.map(async (payment) => {
+        const session = await ctx.db.get(payment.sessionId);
+        const vehicle = session ? await ctx.db.get(session.vehicleId) : null;
+        const client = await ctx.db.get(payment.clientId);
+        const agent = await ctx.db.get(payment.agentId);
+        return { ...payment, session, vehicle, client, agent };
+      })
+    );
+  },
+});
+
 // Server-side Paystack transaction verification action
 export const verifyAndConfirm = action({
   args: {

@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "../hooks/useAuth";
-import { useQuery } from "convex/react";
+import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import type { Id } from "../../convex/_generated/dataModel";
 import { Sidebar } from "../components/layout/Sidebar";
@@ -12,9 +12,10 @@ import { useGeolocation } from "../hooks/useGeolocation";
 import { usePaystackRedirect } from "../hooks/usePaystackRedirect";
 import { useToast } from "../hooks/useToast";
 import { formatDuration, formatCurrency, calculateCharge } from "../lib/utils";
-import { Timer, DollarSign, Car, MapPin, CreditCard, CheckCircle, Loader2, Receipt, Copy, Check, Clock, Calendar, Hash, ShieldCheck, Sparkles } from "lucide-react";
+import { Timer, DollarSign, Car, MapPin, CreditCard, CheckCircle, Loader2, Receipt, Copy, Check, Clock, Calendar, Hash, ShieldCheck, Sparkles, AlertTriangle, X, Upload } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type L from "leaflet";
+import { Input } from "../components/ui/Input";
 
 export const Route = createFileRoute("/session/$sessionId")({
   component: SessionPage,
@@ -27,6 +28,7 @@ export function SessionPage() {
   const { toast } = useToast();
   const { initiatePayment, loading: payLoading, error: payError } = usePaystackRedirect();
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [showIncidentModal, setShowIncidentModal] = useState(false);
 
   const handleCopy = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
@@ -41,6 +43,11 @@ export function SessionPage() {
 
   const payment = useQuery(
     api.payments.getBySession,
+    session ? { sessionId: session._id } : "skip"
+  );
+
+  const incidents = useQuery(
+    api.incidents.getBySession,
     session ? { sessionId: session._id } : "skip"
   );
 
@@ -214,14 +221,29 @@ export function SessionPage() {
 
         {/* Active session GPS notice */}
         {isActive && (
-          <div className="mt-6 p-4 rounded-2xl bg-primary-50 border border-primary-100 text-center animate-pulse">
-            <p className="text-sm text-primary-700 font-medium">
-              {user.role === "client"
-                ? "🔴 Your GPS location is being shared with the agent for fleet tracking. The session will be ended by the agent when you return the vehicle."
-                : "🔴 The client's GPS location is being tracked for fleet safety. You can end the session once the vehicle is returned."
-              }
-            </p>
-          </div>
+          <>
+            <div className="mt-6 p-4 rounded-2xl bg-primary-50 border border-primary-100 text-center animate-pulse">
+              <p className="text-sm text-primary-700 font-medium">
+                {user.role === "client"
+                  ? "🔴 Your GPS location is being shared with the agent for fleet tracking. The session will be ended by the agent when you return the vehicle."
+                  : "🔴 The client's GPS location is being tracked for fleet safety. You can end the session once the vehicle is returned."
+                }
+              </p>
+            </div>
+            
+            {/* Report Incident Button for Clients */}
+            {user.role === "client" && (
+              <div className="mt-4">
+                <Button
+                  onClick={() => setShowIncidentModal(true)}
+                  variant="outline"
+                  className="w-full rounded-2xl border-red-200 text-red-700 hover:bg-red-50"
+                >
+                  <AlertTriangle className="w-4 h-4" /> Report Incident
+                </Button>
+              </div>
+            )}
+          </>
         )}
 
         {/* Map — shows during active session if location is available */}
@@ -371,8 +393,346 @@ export function SessionPage() {
             </CardContent>
           </Card>
         )}
+
+        {/* Incidents Section */}
+        {incidents && incidents.length > 0 && (
+          <Card className="mt-6 border border-amber-200/70 bg-amber-50/30">
+            <CardContent className="py-6">
+              <h3 className="text-sm font-semibold text-surface-900 mb-4 flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 text-amber-600" />
+                Reported Incidents ({incidents.length})
+              </h3>
+              <div className="space-y-3">
+                {incidents.map((incident: any) => (
+                  <div
+                    key={incident._id}
+                    className="bg-white rounded-2xl border border-amber-200 p-4"
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <div>
+                        <h4 className="font-bold text-surface-900">{incident.title}</h4>
+                        <Badge
+                          variant={
+                            incident.severity === "major"
+                              ? "danger"
+                              : incident.severity === "moderate"
+                              ? "warning"
+                              : "default"
+                          }
+                          size="sm"
+                        >
+                          {incident.severity}
+                        </Badge>
+                      </div>
+                      <Badge
+                        variant={
+                          incident.status === "resolved"
+                            ? "success"
+                            : incident.status === "reviewing"
+                            ? "warning"
+                            : "default"
+                        }
+                        size="sm"
+                      >
+                        {incident.status}
+                      </Badge>
+                    </div>
+                    <p className="text-sm text-surface-600 mb-2">{incident.description}</p>
+                    {incident.photos.length > 0 && (
+                      <div className="flex gap-2 flex-wrap">
+                        {incident.photos.map((photo: string, idx: number) => (
+                          <img
+                            key={idx}
+                            src={photo}
+                            alt={`Incident ${idx + 1}`}
+                            className="w-20 h-20 object-cover rounded-lg border border-surface-200"
+                          />
+                        ))}
+                      </div>
+                    )}
+                    <p className="text-xs text-surface-400 mt-2">
+                      Reported {new Date(incident.createdAt).toLocaleString()}
+                    </p>
+                    {incident.resolutionNotes && (
+                      <div className="mt-3 pt-3 border-t border-surface-100">
+                        <p className="text-xs font-semibold text-surface-700 mb-1">Resolution Notes:</p>
+                        <p className="text-sm text-surface-600">{incident.resolutionNotes}</p>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Incident Report Modal */}
+        {showIncidentModal && user && (
+          <IncidentReportModal
+            sessionId={session._id}
+            clientId={user._id}
+            onClose={() => setShowIncidentModal(false)}
+            onSuccess={() => {
+              setShowIncidentModal(false);
+              toast("Incident reported successfully", "success");
+            }}
+          />
+        )}
       </main>
     </div>
   );
 }
 
+// Incident Report Modal Component
+function IncidentReportModal({
+  sessionId,
+  clientId,
+  onClose,
+  onSuccess,
+}: {
+  sessionId: Id<"sessions">;
+  clientId: Id<"users">;
+  onClose: () => void;
+  onSuccess: () => void;
+}) {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [severity, setSeverity] = useState<"minor" | "moderate" | "major">("minor");
+  const [photos, setPhotos] = useState<string[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+
+  const reportIncident = useMutation(api.incidents.report);
+  const generateUploadUrl = useMutation(api.incidents.generateUploadUrl);
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setUploading(true);
+    setError("");
+
+    try {
+      const uploadedIds: string[] = [];
+
+      for (const file of Array.from(files)) {
+        const uploadUrl = await generateUploadUrl();
+        const result = await fetch(uploadUrl, {
+          method: "POST",
+          headers: { "Content-Type": file.type },
+          body: file,
+        });
+
+        if (!result.ok) throw new Error("Upload failed");
+        const { storageId } = await result.json();
+        uploadedIds.push(storageId);
+      }
+
+      setPhotos([...photos, ...uploadedIds]);
+    } catch (err) {
+      setError("Failed to upload photos. Please try again.");
+      console.error(err);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const removePhoto = (index: number) => {
+    setPhotos(photos.filter((_, i) => i !== index));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+
+    if (!title.trim() || !description.trim()) {
+      setError("Please provide both a title and description");
+      return;
+    }
+
+    setSubmitting(true);
+
+    try {
+      // Get current location if available
+      let location: { latitude: number; longitude: number } | undefined;
+      
+      if (navigator.geolocation) {
+        try {
+          const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, {
+              timeout: 5000,
+              maximumAge: 0,
+            });
+          });
+          location = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          };
+        } catch {
+          // Location optional, continue without it
+        }
+      }
+
+      await reportIncident({
+        sessionId,
+        clientId,
+        title: title.trim(),
+        description: description.trim(),
+        severity,
+        photos,
+        location,
+      });
+
+      onSuccess();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to report incident");
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+        <div className="sticky top-0 bg-white border-b border-surface-200 px-6 py-4 flex items-center justify-between rounded-t-3xl">
+          <div>
+            <h2 className="text-xl font-bold text-surface-900">Report Incident</h2>
+            <p className="text-sm text-surface-500">Document any issues during your rental</p>
+          </div>
+          <button
+            onClick={onClose}
+            className="w-8 h-8 rounded-full bg-surface-100 hover:bg-surface-200 flex items-center justify-center transition-colors"
+          >
+            <X className="w-4 h-4 text-surface-600" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-6 space-y-5">
+          {error && (
+            <div className="p-4 bg-red-50 border border-red-200 rounded-2xl flex items-start gap-3">
+              <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+              <p className="text-sm text-red-800">{error}</p>
+            </div>
+          )}
+
+          <div>
+            <label className="block text-sm font-bold text-surface-900 mb-2">
+              Incident Title *
+            </label>
+            <Input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="e.g., Minor scratch on rear bumper"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-bold text-surface-900 mb-2">
+              Severity *
+            </label>
+            <div className="flex gap-2">
+              {(["minor", "moderate", "major"] as const).map((sev) => (
+                <button
+                  key={sev}
+                  type="button"
+                  onClick={() => setSeverity(sev)}
+                  className={`flex-1 px-4 py-2 rounded-xl border-2 font-semibold text-sm transition-all ${
+                    severity === sev
+                      ? sev === "major"
+                        ? "border-red-500 bg-red-50 text-red-700"
+                        : sev === "moderate"
+                        ? "border-amber-500 bg-amber-50 text-amber-700"
+                        : "border-blue-500 bg-blue-50 text-blue-700"
+                      : "border-surface-200 text-surface-600 hover:border-surface-300"
+                  }`}
+                >
+                  {sev.charAt(0).toUpperCase() + sev.slice(1)}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-bold text-surface-900 mb-2">
+              Description *
+            </label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Provide detailed information about what happened..."
+              required
+              rows={4}
+              className="w-full px-4 py-3 border border-surface-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-bold text-surface-900 mb-2">
+              Photos (Optional)
+            </label>
+            {photos.length > 0 && (
+              <div className="grid grid-cols-3 gap-2 mb-3">
+                {photos.map((_photo, idx) => (
+                  <div key={idx} className="relative group">
+                    <div className="w-full h-24 bg-surface-100 rounded-xl" />
+                    <button
+                      type="button"
+                      onClick={() => removePhoto(idx)}
+                      className="absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            <label className="block">
+              <div className="border-2 border-dashed border-surface-300 rounded-2xl p-4 text-center cursor-pointer hover:border-primary-500 transition-colors">
+                <Upload className="w-6 h-6 text-surface-400 mx-auto mb-1" />
+                <p className="text-sm text-surface-600 font-medium">
+                  {uploading ? "Uploading..." : "Click to upload photos"}
+                </p>
+              </div>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handlePhotoUpload}
+                disabled={uploading}
+                className="hidden"
+              />
+            </label>
+          </div>
+
+          <div className="flex gap-3 pt-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              disabled={submitting}
+              className="flex-1 rounded-2xl"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={submitting || uploading}
+              className="flex-1 rounded-2xl"
+            >
+              {submitting ? (
+                <>
+                  <Spinner className="w-4 h-4" /> Submitting...
+                </>
+              ) : (
+                <>
+                  <AlertTriangle className="w-4 h-4" /> Report Incident
+                </>
+              )}
+            </Button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}

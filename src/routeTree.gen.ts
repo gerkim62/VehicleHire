@@ -31,6 +31,7 @@ import { Route as ActiveSessionsRouteImport } from './routes/active-sessions'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VehicleVehicleIdRouteImport } from './routes/vehicle.$vehicleId'
 import { Route as SessionSessionIdRouteImport } from './routes/session.$sessionId'
+import { Route as EditVehicleVehicleIdRouteImport } from './routes/edit-vehicle.$vehicleId'
 
 const VehiclesRoute = VehiclesRouteImport.update({
   id: '/vehicles',
@@ -142,6 +143,11 @@ const SessionSessionIdRoute = SessionSessionIdRouteImport.update({
   path: '/session/$sessionId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EditVehicleVehicleIdRoute = EditVehicleVehicleIdRouteImport.update({
+  id: '/edit-vehicle/$vehicleId',
+  path: '/edit-vehicle/$vehicleId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -164,6 +170,7 @@ export interface FileRoutesByFullPath {
   '/register': typeof RegisterRoute
   '/reports': typeof ReportsRoute
   '/vehicles': typeof VehiclesRoute
+  '/edit-vehicle/$vehicleId': typeof EditVehicleVehicleIdRoute
   '/session/$sessionId': typeof SessionSessionIdRoute
   '/vehicle/$vehicleId': typeof VehicleVehicleIdRoute
 }
@@ -188,6 +195,7 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterRoute
   '/reports': typeof ReportsRoute
   '/vehicles': typeof VehiclesRoute
+  '/edit-vehicle/$vehicleId': typeof EditVehicleVehicleIdRoute
   '/session/$sessionId': typeof SessionSessionIdRoute
   '/vehicle/$vehicleId': typeof VehicleVehicleIdRoute
 }
@@ -213,6 +221,7 @@ export interface FileRoutesById {
   '/register': typeof RegisterRoute
   '/reports': typeof ReportsRoute
   '/vehicles': typeof VehiclesRoute
+  '/edit-vehicle/$vehicleId': typeof EditVehicleVehicleIdRoute
   '/session/$sessionId': typeof SessionSessionIdRoute
   '/vehicle/$vehicleId': typeof VehicleVehicleIdRoute
 }
@@ -239,6 +248,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/reports'
     | '/vehicles'
+    | '/edit-vehicle/$vehicleId'
     | '/session/$sessionId'
     | '/vehicle/$vehicleId'
   fileRoutesByTo: FileRoutesByTo
@@ -263,6 +273,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/reports'
     | '/vehicles'
+    | '/edit-vehicle/$vehicleId'
     | '/session/$sessionId'
     | '/vehicle/$vehicleId'
   id:
@@ -287,6 +298,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/reports'
     | '/vehicles'
+    | '/edit-vehicle/$vehicleId'
     | '/session/$sessionId'
     | '/vehicle/$vehicleId'
   fileRoutesById: FileRoutesById
@@ -312,6 +324,7 @@ export interface RootRouteChildren {
   RegisterRoute: typeof RegisterRoute
   ReportsRoute: typeof ReportsRoute
   VehiclesRoute: typeof VehiclesRoute
+  EditVehicleVehicleIdRoute: typeof EditVehicleVehicleIdRoute
   SessionSessionIdRoute: typeof SessionSessionIdRoute
   VehicleVehicleIdRoute: typeof VehicleVehicleIdRoute
 }
@@ -472,6 +485,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SessionSessionIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/edit-vehicle/$vehicleId': {
+      id: '/edit-vehicle/$vehicleId'
+      path: '/edit-vehicle/$vehicleId'
+      fullPath: '/edit-vehicle/$vehicleId'
+      preLoaderRoute: typeof EditVehicleVehicleIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -496,6 +516,7 @@ const rootRouteChildren: RootRouteChildren = {
   RegisterRoute: RegisterRoute,
   ReportsRoute: ReportsRoute,
   VehiclesRoute: VehiclesRoute,
+  EditVehicleVehicleIdRoute: EditVehicleVehicleIdRoute,
   SessionSessionIdRoute: SessionSessionIdRoute,
   VehicleVehicleIdRoute: VehicleVehicleIdRoute,
 }

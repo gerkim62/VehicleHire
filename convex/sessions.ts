@@ -253,6 +253,25 @@ export const getActiveByClient = query({
   },
 });
 
+// Get all sessions (admin)
+export const getAll = query({
+  handler: async (ctx) => {
+    const sessions = await ctx.db
+      .query("sessions")
+      .order("desc")
+      .collect();
+
+    return await Promise.all(
+      sessions.map(async (session) => {
+        const vehicle = await ctx.db.get(session.vehicleId);
+        const client = await ctx.db.get(session.clientId);
+        const agent = await ctx.db.get(session.agentId);
+        return { ...session, vehicle, client, agent };
+      })
+    );
+  },
+});
+
 // Get all active sessions (admin)
 export const getAllActive = query({
   handler: async (ctx) => {

@@ -138,7 +138,8 @@ export default defineSchema({
       v.literal("session_completed"),
       v.literal("payment_received"),
       v.literal("agent_approved"),
-      v.literal("agent_rejected")
+      v.literal("agent_rejected"),
+      v.literal("incident_reported")
     ),
     title: v.string(),
     message: v.string(),
@@ -148,4 +149,38 @@ export default defineSchema({
   })
     .index("by_user", ["userId"])
     .index("by_user_unread", ["userId", "isRead"]),
+
+  incidents: defineTable({
+    sessionId: v.id("sessions"),
+    clientId: v.id("users"),
+    agentId: v.id("users"),
+    vehicleId: v.id("vehicles"),
+    title: v.string(),
+    description: v.string(),
+    severity: v.union(
+      v.literal("minor"),
+      v.literal("moderate"),
+      v.literal("major")
+    ),
+    photos: v.array(v.string()), // Convex storage IDs
+    location: v.optional(
+      v.object({
+        latitude: v.number(),
+        longitude: v.number(),
+      })
+    ),
+    status: v.union(
+      v.literal("reported"),
+      v.literal("reviewing"),
+      v.literal("resolved")
+    ),
+    resolutionNotes: v.optional(v.string()),
+    resolvedAt: v.optional(v.number()),
+    createdAt: v.number(),
+  })
+    .index("by_session", ["sessionId"])
+    .index("by_client", ["clientId"])
+    .index("by_agent", ["agentId"])
+    .index("by_vehicle", ["vehicleId"])
+    .index("by_status", ["status"]),
 });

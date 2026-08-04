@@ -47,7 +47,7 @@ export function VehiclesPage() {
 
   const avgRate = useMemo(() => {
     if (!vehicles || vehicles.length === 0) return 0;
-    return Math.round(vehicles.reduce((acc, v) => acc + v.rateAmount, 0) / vehicles.length);
+    return Math.round(vehicles.reduce((acc: number, v: Vehicle) => acc + v.rateAmount, 0) / vehicles.length);
   }, [vehicles]);
 
   useEffect(() => {

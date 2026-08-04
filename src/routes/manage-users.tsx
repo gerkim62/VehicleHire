@@ -46,9 +46,9 @@ export function ManageUsersPage() {
   if (!user || user.role !== "admin") return null;
 
   const totalCount = allUsers?.length || 0;
-  const clientCount = allUsers?.filter((u) => u.role === "client").length || 0;
-  const agentCount = allUsers?.filter((u) => u.role === "agent").length || 0;
-  const adminCount = allUsers?.filter((u) => u.role === "admin").length || 0;
+  const clientCount = allUsers?.filter((u: DBUser) => u.role === "client").length || 0;
+  const agentCount = allUsers?.filter((u: DBUser) => u.role === "agent").length || 0;
+  const adminCount = allUsers?.filter((u: DBUser) => u.role === "admin").length || 0;
 
   return (
     <div className="flex flex-col md:flex-row min-h-[calc(100vh-4rem)] bg-surface-50">

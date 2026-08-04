@@ -25,9 +25,9 @@ export function MyVehiclesPage() {
 
   const filtered = useMemo(() => {
     if (!vehicles) return [];
-    if (filter === "available") return vehicles.filter((v) => v.isActive && v.isAvailable);
-    if (filter === "hired") return vehicles.filter((v) => v.isActive && !v.isAvailable);
-    if (filter === "inactive") return vehicles.filter((v) => !v.isActive);
+    if (filter === "available") return vehicles.filter((v: Vehicle) => v.isActive && v.isAvailable);
+    if (filter === "hired") return vehicles.filter((v: Vehicle) => v.isActive && !v.isAvailable);
+    if (filter === "inactive") return vehicles.filter((v: Vehicle) => !v.isActive);
     return vehicles;
   }, [vehicles, filter]);
 
@@ -68,8 +68,8 @@ export function MyVehiclesPage() {
   };
 
   const totalCount = vehicles?.length || 0;
-  const availableCount = vehicles?.filter((v) => v.isActive && v.isAvailable).length || 0;
-  const hiredCount = vehicles?.filter((v) => v.isActive && !v.isAvailable).length || 0;
+  const availableCount = vehicles?.filter((v: Vehicle) => v.isActive && v.isAvailable).length || 0;
+  const hiredCount = vehicles?.filter((v: Vehicle) => v.isActive && !v.isAvailable).length || 0;
 
   return (
     <div className="flex flex-col md:flex-row min-h-[calc(100vh-4rem)] bg-surface-50">
@@ -205,6 +205,9 @@ export function MyVehiclesPage() {
                     <Button size="sm" variant="ghost" onClick={() => toggleActive(v._id, v.isActive)} className="flex-1 rounded-xl text-xs">
                       {v.isActive ? <><EyeOff className="w-3.5 h-3.5" /> Deactivate</> : <><Eye className="w-3.5 h-3.5" /> Activate</>}
                     </Button>
+                    <Link to="/edit-vehicle/$vehicleId" params={{ vehicleId: v._id }}>
+                      <Button size="sm" variant="outline" className="rounded-xl text-xs">Edit</Button>
+                    </Link>
                     <Link to="/vehicle/$vehicleId" params={{ vehicleId: v._id }}>
                       <Button size="sm" variant="outline" className="rounded-xl text-xs">View</Button>
                     </Link>

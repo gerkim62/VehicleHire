@@ -35,6 +35,7 @@ export function getNavLinks(role: string): SidebarLink[] {
       { to: "/vehicles", label: "Browse Vehicles", icon: <Search className="w-4 h-4" /> },
       { to: "/bookings", label: "My Bookings", icon: <CalendarCheck className="w-4 h-4" /> },
       { to: "/history", label: "Hire History", icon: <History className="w-4 h-4" /> },
+      { to: "/reports", label: "Reports", icon: <BarChart3 className="w-4 h-4" /> },
     ];
   } else if (role === "agent") {
     return [
@@ -44,7 +45,7 @@ export function getNavLinks(role: string): SidebarLink[] {
       { to: "/agent-bookings", label: "Bookings", icon: <CalendarCheck className="w-4 h-4" /> },
       { to: "/active-sessions", label: "Active Rentals", icon: <Timer className="w-4 h-4" /> },
       { to: "/agent-reviews", label: "Reviews", icon: <Star className="w-4 h-4" /> },
-      { to: "/reports", label: "Analytics", icon: <BarChart3 className="w-4 h-4" /> },
+      { to: "/reports", label: "Reports", icon: <BarChart3 className="w-4 h-4" /> },
     ];
   } else if (role === "admin") {
     return [
@@ -52,7 +53,8 @@ export function getNavLinks(role: string): SidebarLink[] {
       { to: "/manage-agents", label: "Agent Approvals", icon: <Shield className="w-4 h-4" /> },
       { to: "/manage-users", label: "User Management", icon: <Users className="w-4 h-4" /> },
       { to: "/all-sessions", label: "Active Rentals", icon: <Timer className="w-4 h-4" /> },
-      { to: "/admin-reports", label: "System Reports", icon: <BarChart3 className="w-4 h-4" /> },
+      { to: "/admin-reports", label: "Analytics", icon: <BarChart3 className="w-4 h-4" /> },
+      { to: "/reports", label: "Reports", icon: <BarChart3 className="w-4 h-4" /> },
     ];
   }
   return [];
